@@ -1,0 +1,34 @@
+These files are compiled with Coq v8.1pl3 using the Ssreflect v1.1 library. 
+
+- Trace.v defines traces and bisimilarity. It proves bisimilarity is
+reflexive, symmetric and transitive.
+
+- Language.v defines the While language.
+
+- BigRel.v defines the big-step relational semantics and proves that it is
+deterministic and a setoid predicate.
+
+- SmallRel.v defines the small-step relational semantics and proves
+that it is deterministic and a setoid predicate and that the big-step
+relational and small-step relational semantics are equivalent.
+
+- BigFunct.v defines the big-step functional semantics and proves that
+the big-step relational and the big-step functional semantics are
+equivalent.
+
+- SmallFunct.v defines the small-step functional semantics and proves
+that the small-step relational and the small-step functional semantics
+are equivalent and that the small-step functional and the big-step
+functional semantics are equivalent. 
+
+- Alternatives.v gives the complete formalizations of the alternative
+big-step semantics considered in the accompanying paper. 
+
+
+
+
+
+
+
+
+
