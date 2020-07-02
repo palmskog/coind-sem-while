@@ -1,10 +1,10 @@
--R . CoindOpSemWhile
+-R theories CoindOpSemWhile
 
-SsrExport.v
-Alternatives.v
-BigFunct.v
-BigRel.v
-Language.v
-SmallFunct.v
-SmallRel.v
-Trace.v
+theories/SsrExport.v
+theories/Alternatives.v
+theories/BigFunct.v
+theories/BigRel.v
+theories/Language.v
+theories/SmallFunct.v
+theories/SmallRel.v
+theories/Trace.v
