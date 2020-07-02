@@ -1,23 +1,16 @@
-COQC=ssrcoq  -compile
-COQDEP=coqdep 
-FILES=Trace.v Language.v BigRel.v SmallRel.v BigFunct.v SmallFunct.v Alternatives.v
+all: Makefile.coq
+	@+$(MAKE) -f Makefile.coq all
 
-all: $(FILES:.v=.vo)
-	@echo "done"
+clean: Makefile.coq
+	@+$(MAKE) -f Makefile.coq cleanall
+	@rm -f Makefile.coq Makefile.coq.conf
 
-clean:
-	-rm $(FILES:.v=.vo)
+Makefile.coq: _CoqProject
+	$(COQBIN)coq_makefile -f _CoqProject -o Makefile.coq
 
-.SUFFIXES: .v .vo
+force _CoqProject Makefile: ;
 
-.v.vo:
-	$(COQC) $*
+%: Makefile.coq force
+	@+$(MAKE) -f Makefile.coq $@
 
-Trace.vo: Trace.v
-Language.vo: Language.v Trace.vo
-BigRel.vo: BigRel.v Trace.vo Language.vo
-SmallRel.vo: SmallRel.v Trace.vo Language.vo BigRel.vo
-BigFunct.vo: BigFunct.v Trace.vo Language.vo BigRel.vo
-SmallFunct.vo: SmallFunct.v Trace.vo Language.vo SmallRel.vo BigRel.vo BigFunct.vo
-Alternatives.vo: Alternatives.v Trace.vo Language.vo BigRel.vo
-
+.PHONY: all clean force

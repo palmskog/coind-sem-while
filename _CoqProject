@@ -1,0 +1,10 @@
+-R . CoindTraces
+
+SsrExport.v
+Alternatives.v
+BigFunct.v
+BigRel.v
+Language.v
+SmallFunct.v
+SmallRel.v
+Trace.v

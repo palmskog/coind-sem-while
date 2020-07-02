@@ -1,4 +1,4 @@
-Require Import ssreflect.
+Require Import SsrExport.
 Require Import Trace.
 Require Import Language. 
 Require Import BigRel. 
@@ -106,8 +106,8 @@ Qed.
 
 Lemma red_exec: 
 forall s st tr, exec s st tr ->
-sum (prod (stop s) (tr = Tnil st)) 
- (sigS (fun s' =>  sigS (fun st' => sigS (fun  tr' => 
+sum (prod (stop s) (tr = Tnil st))
+ (sigT (fun s' =>  sigT (fun st' => sigT (fun  tr' =>
   prod (prod (step s st s' st')  (bisim tr (Tcons st tr'))) (exec s' st' tr'))))).
 Proof. 
 move => s; induction s; move => st tr1 h1; foo h1.   
@@ -186,8 +186,8 @@ cofix COINDHYP. move => s st tr h1. have [h2 | h2] := red_exec h1.
   apply: (exec_insensitive h5 (bisim_symmetric H1)).
 Qed.       
 
-Definition midpoint (s1 s2: stmt) (st: state) (tr: trace) 
-(h: redm (Sseq s1 s2) st tr): trace. 
+Definition midpoint : forall (s1 s2: stmt) (st: state) (tr: trace) 
+(h: redm (Sseq s1 s2) st tr), trace. 
 cofix f. move => s1 s2 st tr h1. foo h1.  
 - apply: (Tnil st).
 - foo H. 
@@ -326,7 +326,7 @@ induction 1.
 Qed.
  
 Lemma norm_correct_redm: forall s st st',
-norm s st st' -> sigS (fun tr => prod (redm s st tr) (result tr st')).
+norm s st st' -> sigT (fun tr => prod (redm s st tr) (result tr st')).
 Proof.
 move => s st st' h1. induction h1. 
 - exists (Tnil st). split.
