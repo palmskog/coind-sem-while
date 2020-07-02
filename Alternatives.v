@@ -7,8 +7,10 @@ Set Implicit Arguments.
 Unset Strict Implicit.
 Import Prenex Implicits.
 
+Section Exec.
+
 Variable tt: expr.
-Axiom tt_spec: forall st, is_true (tt st) = true. 
+Hypothesis tt_spec: forall st, is_true (tt st) = true.
 
 CoInductive exec1: stmt -> state -> trace -> Set :=
 | exec1_skip: forall st, 
@@ -135,7 +137,9 @@ have h1: forall tr tr', execseq2 (Swhile tt (Sassign x (fun st => (st x + 1)%Z))
   * by apply: execseq2_assign. 
   * by apply: COINDHYP.
 * move => st tr. apply: exec2_intro. by apply: h1.  
-Qed. 
+Qed.
+
+End Exec.
 
 CoInductive split: trace -> trace -> state -> trace -> Set :=
 | split_nil: forall st, 
