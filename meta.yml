@@ -1,0 +1,86 @@
+---
+fullname: Trace-Based Coinductive Operational Semantics for While
+shortname: coind-opsem-while
+organization: palmskog
+community: false
+action: true
+coqdoc: false
+dune: true
+
+synopsis: >-
+  Big-step, small-step, relational, and functional style operational
+  semantics for While in Coq using coinductive traces
+
+description: |-
+  Four equivalent coinductive operational semantics in Coq for the While language accounting
+  for both terminating and non-terminating program runs through coinductive traces.
+
+publications:
+- pub_url: https://link.springer.com/chapter/10.1007/978-3-642-03359-9_26
+  pub_title: Trace-Based Coinductive Operational Semantics for While
+  pub_doi: 10.1007/978-3-642-03359-9_26
+
+authors:
+- name: Keiko Nakata
+  initial: true
+- name: Tarmo Uustalu
+  initial: true
+
+opam-file-maintainer: palmskog@gmail.com
+
+opam-file-version: dev
+
+license:
+  fullname: Unknown
+  identifier: Unknown
+
+supported_coq_versions:
+  text: 8.10 or later
+  opam: '{(>= "8.10" & < "8.13~") | (= "dev")}'
+
+tested_coq_opam_versions:
+- version: dev
+- version: '8.12'
+- version: '8.11'
+- version: '8.10'
+
+namespace: CoindOpSemWhile
+
+keywords:
+- name: coinduction
+- name: while
+
+categories:
+- name: Computer Science/Semantics and Compilation/Semantics
+
+build: |-
+ ## Building instructions
+
+ ``` shell
+ git clone https://github.com/palmskog/coind-opsem-while
+ cd coind-opsem-while
+ make   # or make -j <number-of-cores-on-your-machine>
+ ```
+
+documentation: |-
+  ## Documentation
+
+  - `Trace.v` defines traces and bisimilarity. It proves
+    bisimilarity is reflexive, symmetric and transitive.
+  - `Language.v` defines the While language.
+  - BigRel.v defines the big-step relational semantics
+    and proves that it is deterministic and a setoid predicate.
+  - `SmallRel.v` defines the small-step relational semantics
+    and proves that it is deterministic and a setoid predicate
+    and that the big-step relational and small-step relational
+    semantics are equivalent.
+  - `BigFunct.v` defines the big-step functional semantics and
+    proves that the big-step relational and the big-step functional
+    semantics are equivalent.
+  - `SmallFunct.v` defines the small-step functional semantics
+    and proves that the small-step relational and the small-step
+    functional semantics are equivalent and that the small-step
+    functional and the big-step functional semantics are equivalent.
+  - `Alternatives.v` gives the complete formalizations of the alternative
+    big-step semantics considered in the accompanying paper.
+---
