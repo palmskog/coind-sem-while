@@ -202,7 +202,7 @@ JMeq h h1 ->
 redm s1 st (midpoint h1).
 Proof.
 cofix COINDHYP. dependent inversion h; subst; move => s2 s3.
-- move => h1 h2 h3. subst. have h4 := JMeq_eq h3. rewrite -h4. 
+- move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4. 
   rewrite [midpoint _]trace_destr. simpl. apply: redm_stop.
   inversion s1; subst. by apply: H1. 
 - move: s st s' st' s1 r h. dependent inversion s1; subst. 
@@ -239,7 +239,7 @@ JMeq h h1 ->
 redm_str s2 (midpoint h1) tr.
 Proof.
 cofix COINDHYP. dependent inversion h; subst; move => s2 s3.
-- move => h1 h2 h3. subst. have h4 := JMeq_eq h3. rewrite -h4. 
+- move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4. 
   rewrite [midpoint _]trace_destr. simpl. apply: redm_nil.
   inversion s1; subst. by apply: (redm_stop _ H2).  
 - move: s st s' st' s1 r h. dependent inversion s1; subst. 
@@ -336,4 +336,3 @@ move => s st st' h1. induction h1.
   * by apply: (redm_step s0 h2).
   * by apply: (res_step _  h3). 
 Qed.
-
