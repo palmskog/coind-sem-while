@@ -8,3 +8,10 @@ theories/Language.v
 theories/SmallFunct.v
 theories/SmallRel.v
 theories/Trace.v
+theories/Assert.v
+theories/Semax.v
+theories/Weakbism.v
+theories/Hoare.v
+theories/HoareTotal.v
+theories/Liveness.v
+theories/Markov.v

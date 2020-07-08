@@ -16,3 +16,6 @@ Inductive stmt : Set :=
 Definition update (x: id) (v: val) (st:state): state :=
   fun y => if Zeq_bool x  y  then v  else st y.
 
+Notation "x <- e" := (Sassign x e) (at level 80).
+Notation "s1 ';;' s2" :=
+  (Sseq s1 s2) (at level 80, right associativity).

@@ -8,7 +8,7 @@ Import Prenex Implicits.
 Ltac foo h := inversion h; subst => {h}.
 
 Definition id := Z.
-Definition val := Z.
+Definition val := nat.
 Definition state := id -> val. 
 
 CoInductive trace: Set := | Tnil (_: state) | Tcons (_: state) (_: trace) .
@@ -90,4 +90,9 @@ cofix COINDHYP. case.
   have := bisim_cons _ (COINDHYP _ _ _ _ H2 h2); apply.
 Qed. 
 
-  
+Definition hd tr := match tr with Tnil st => st | Tcons st tr0 => st end. 
+
+Lemma bisim_hd: forall tr0 tr1, bisim tr0 tr1 -> hd tr0 = hd tr1. 
+Proof. 
+move => tr0 tr1 h0. by foo h0; simpl. 
+Qed.

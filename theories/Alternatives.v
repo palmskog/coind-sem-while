@@ -125,18 +125,18 @@ have h1: forall tr tr', execseq2 (Swhile tt Sskip) tr tr'.
 * move => st tr. apply: exec2_intro. by apply: h1.  
 Qed.
 
-Lemma lemma3: forall x st tr, exec2 (Swhile tt (Sassign x (fun st => (st x + 1)%Z))) st tr.
+Lemma lemma3: forall x st tr, exec2 (Swhile tt (Sassign x (fun st => (st x + 1)))) st tr.
 Proof. 
 move => x. 
-have h1: forall tr tr', execseq2 (Swhile tt (Sassign x (fun st => (st x + 1)%Z))) tr tr'.
+have h1: forall tr tr', execseq2 (Swhile tt (Sassign x (fun st => (st x + 1)))) tr tr'.
 * cofix COINDHYP. move => tr0 tr1. 
-  have := (@execseq2_while_loop _ _ _ (updatelast x (fun st => (st x + 1)%Z) (duplast tr0)) tr1); apply. 
-  * move: tr0. cofix COINDHYP0. case. 
-    - move => st. apply: last_true_nil. by apply: tt_spec. 
-    - move => st tr. by have := last_true_cons _ (COINDHYP0 _); apply. 
-  * by apply: execseq2_assign. 
+  have := (@execseq2_while_loop _ _ _ (updatelast x (fun st => (st x + 1)) (duplast tr0)) tr1); apply.
+  * move: tr0. cofix COINDHYP0. case.
+    - move => st. apply: last_true_nil. by apply: tt_spec.
+    - move => st tr. by have := last_true_cons _ (COINDHYP0 _); apply.
+  * by apply: execseq2_assign.
   * by apply: COINDHYP.
-* move => st tr. apply: exec2_intro. by apply: h1.  
+* move => st tr. apply: exec2_intro. by apply: h1.
 Qed.
 
 End Exec.
@@ -207,6 +207,4 @@ cofix  COINDHYP. move => s st tr h1. foo h1.
     - apply execseq_nil. by have := COINDHYP _ _ _ h2; apply. 
     - apply execseq_nil. by have := COINDHYP _ _ _ h2; apply. 
     - apply execseq_cons. by have := COINDHYP0 _ _ _ _ H h2. 
-Qed.      
-
-     
+Qed.
