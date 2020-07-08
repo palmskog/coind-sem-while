@@ -1,6 +1,5 @@
 Require Import SsrExport.
 Require Export ZArith.
-Require Export List.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
