@@ -9,12 +9,12 @@ Unset Strict Implicit.
 Import Prenex Implicits. 
 
 (* terminality predicate*)
-Inductive stop: stmt -> Set :=
+Inductive stop: stmt -> Prop :=
 | stop_skip: stop Sskip
 | stop_seq: forall s1 s2, 
   stop s1 -> stop s2 -> stop (Sseq s1 s2)
 (* one-step reduction relation *)
-with step : stmt -> state -> stmt -> state -> Set :=
+with step : stmt -> state -> stmt -> state -> Prop :=
 | step_assign: forall x a st, 
   step (Sassign x a) st Sskip (update x (a st) st)
 | step_seq1: forall s1 s1' st' s2 st,
@@ -37,7 +37,7 @@ with step : stmt -> state -> stmt -> state -> Set :=
   step (Swhile a s) st (Sseq s (Swhile a s)) st.
 
 (* small-step relational semantics *)
-CoInductive redm: stmt -> state -> trace -> Set :=
+CoInductive redm: stmt -> state -> trace -> Prop :=
 | redm_stop: forall s st, 
   stop s -> redm s st (Tnil st)
 | redm_step: forall s st s' st' tr, 
@@ -106,9 +106,7 @@ Qed.
 
 Lemma red_exec: 
 forall s st tr, exec s st tr ->
-sum (prod (stop s) (tr = Tnil st))
- (sigT (fun s' =>  sigT (fun st' => sigT (fun  tr' =>
-  prod (prod (step s st s' st')  (bisim tr (Tcons st tr'))) (exec s' st' tr'))))).
+(stop s /\ tr = Tnil st) \/ (exists s' st' tr', (step s st s' st' /\ bisim tr (Tcons st tr')) /\ exec s' st' tr').
 Proof. 
 move => s; induction s; move => st tr1 h1; foo h1.   
 -  left. split.
@@ -184,10 +182,10 @@ cofix COINDHYP. move => s st tr h1. have [h2 | h2] := red_exec h1.
 - move: h2 => [s1 [st1 [tr1 h3]]]. move: h3 => [[h3 h4] h5]. foo h4.  
   apply: (redm_step h3). apply: COINDHYP.   
   apply: (exec_insensitive h5 (bisim_symmetric H1)).
-Qed.       
+Qed.
 
 Definition midpoint : forall (s1 s2: stmt) (st: state) (tr: trace) 
-(h: redm (Sseq s1 s2) st tr), trace. 
+(h: redm (Sseq s1 s2) st tr), trace.
 cofix f. move => s1 s2 st tr h1. foo h1.  
 - apply: (Tnil st).
 - foo H. 
@@ -224,7 +222,7 @@ Proof.
 move => s1 s2 st tr h. by apply: (midpoint_before0 (refl_equal _) (JMeq_refl _)).
 Qed.  
 
-CoInductive redm_str: stmt -> trace -> trace -> Set :=
+CoInductive redm_str: stmt -> trace -> trace -> Prop :=
 | redm_nil: forall s st tr, 
   redm s st tr ->
   redm_str s (Tnil st) tr
@@ -303,7 +301,7 @@ Qed.
 
 
 (* adequacy relative to the inductive semantics *)
-Inductive norm: stmt -> state -> state -> Set :=
+Inductive norm: stmt -> state -> state -> Prop :=
 | norm_nil: forall s st, 
   stop s  -> norm s st st
 | norm_cons: forall s st s'  st' st'',  
@@ -311,7 +309,7 @@ Inductive norm: stmt -> state -> state -> Set :=
   norm s' st' st'' ->
   norm s st st''.
 
-Inductive result: trace -> state -> Set :=
+Inductive result: trace -> state -> Prop :=
 | res_return: forall st, result (Tnil st) st
 | res_step: forall st st' tr,
   result tr st ->

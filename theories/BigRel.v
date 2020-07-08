@@ -7,7 +7,7 @@ Unset Strict Implicit.
 Import Prenex Implicits.
 
 (* big-step relational semantics *)
-CoInductive exec: stmt -> state -> trace -> Set :=
+CoInductive exec: stmt -> state -> trace -> Prop :=
 | exec_skip: forall st, 
     exec Sskip st (Tnil st)
 | exec_assign: forall id a st, 
@@ -33,7 +33,7 @@ CoInductive exec: stmt -> state -> trace -> Set :=
     execseq (Swhile a s) tr tr' ->
     exec (Swhile a s) st tr'
 
-with execseq: stmt -> trace -> trace -> Set :=
+with execseq: stmt -> trace -> trace -> Prop :=
 | execseq_nil: forall st s tr,
   exec s st tr ->
   execseq s (Tnil st) tr

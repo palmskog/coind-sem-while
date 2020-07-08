@@ -24,7 +24,7 @@ forall tr, tr = trace_decompose tr.
 Proof. case => //=. Qed.  
 
 (* bisimilarity of two traces *)
-CoInductive bisim: trace -> trace -> Set :=
+CoInductive bisim: trace -> trace -> Prop :=
 | bisim_nil: forall st,
   bisim (Tnil st) (Tnil st)
 | bisim_cons: forall e tr tr',
