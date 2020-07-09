@@ -2,7 +2,9 @@ Require Import SsrExport.
 Require Import Trace.
 Require Import Language. 
 Require Import BigRel. 
-Require Import JMeq. 
+Require Import JMeq.
+From Coinduction Require Import Coinduction.
+From Hammer Require Import Tactics.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -195,19 +197,16 @@ CoInductive midpoint (s1 s2: stmt) (st: state) (tr: trace)
     @midpoint s1' s2 st' tr0 h' tr' ->
     midpoint h (Tcons st tr').
 
-CoInductive exc (A:Type) (P:A -> Prop) : Prop :=
-  exc_intro : forall x:A, P x -> exc (A:=A) P.
-
-Lemma exc_midpoint0 : forall s st tr (h: redm s st tr),
+CoInduction exc_midpoint0 : forall s st tr (h: redm s st tr),
 forall s1 s2, s = Sseq s1 s2 ->
 forall (h1: redm (Sseq s1 s2) st tr),
 JMeq h h1 ->
-exc (fun tr => midpoint h1 tr).
+exists tr, midpoint h1 tr.
 Proof.
-cofix COINDHYP. dependent inversion h; subst; move => s2 s3.
+dependent inversion h; subst; move => s2 s3.
 - move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4.
-  exists (Tnil st).
-  by apply midpoint_stop_seq.
+  exists (Tnil__g trace__r st).
+  by constructor.
 - move: s s' st st' s1 s2 s3 tr0 h r.
   dependent inversion s1; subst.
   * by move => s2 s3 tr0 h1 h2 h3; inversion h3.
@@ -216,14 +215,17 @@ cofix COINDHYP. dependent inversion h; subst; move => s2 s3.
     have h6 := JMeq_eq h5. rewrite -h6.
     have h2j: JMeq h2 h2 by apply JMeq_refl.
     have hs1: (s1';; s5) = (s1';; s5) by [].
-    case (COINDHYP _ _ _ _ _ _ hs1 _ h2j) => tr' hm.
-    exists (Tcons st tr'). 
-    by apply midpoint_more with (s1' := s1') (st' := st') (tr0 := tr0) (h' := h2).
+    case (CH _ _ _ _ _ _ hs1 _ h2j) => tr' hm.
+    exists (Tcons__g st tr').
+    by econstructor; eauto.
   * move => s5 s6 tr0 h1 h2 h3 h4 h5.
     foo h3.
     have h6 := JMeq_eq h5. rewrite -h6.
-    exists (Tnil st).
-    by apply midpoint_stop_s1 with (s' := s') (st' := st') (tr0 := tr0).
+    exists (Tnil__g trace__r st).
+    econstructor 2.
+    - by apply h2.
+    - by apply s3.
+    - by apply s4.
   * move => s0 s3 tr0 h1 h2 h3. by inversion h3.
   * move => s2 s3 tr0 h1 h2 h3. by inversion h3.
   * move => s2 s3 tr0 h1 h2 h3. by inversion h3.
