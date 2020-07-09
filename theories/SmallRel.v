@@ -184,51 +184,147 @@ cofix COINDHYP. move => s st tr h1. have [h2 | h2] := red_exec h1.
   apply: (exec_insensitive h5 (bisim_symmetric H1)).
 Qed.
 
-Definition midpoint : forall (s1 s2: stmt) (st: state) (tr: trace) 
-(h: redm (Sseq s1 s2) st tr), trace.
-cofix f. move => s1 s2 st tr h1. foo h1.  
-- apply: (Tnil st).
-- foo H. 
-  - apply: (Tcons st (f s1' s2 st' tr0 H0)). 
-  - apply: (Tnil st). 
-Defined.
+CoInductive midpoint (s1 s2: stmt) (st: state) (tr: trace)
+ (h: redm (Sseq s1 s2) st tr) : trace -> Prop :=
+| midpoint_stop_seq : stop (s1;; s2) -> midpoint h (Tnil st)
+| midpoint_stop_s1 : forall s' st' tr0,
+   redm s' st' tr0 -> stop s1 -> step s2 st s' st' ->
+   midpoint h (Tnil st)
+| midpoint_more : forall s1' st' tr0 (h': redm (s1';; s2) st' tr0) tr',
+    step s1 st s1' st' ->
+    @midpoint s1' s2 st' tr0 h' tr' ->
+    midpoint h (Tcons st tr').
 
-Lemma midpoint_before0: forall s st tr (h: redm s st tr),
+CoInductive exc (A:Type) (P:A -> Prop) : Prop :=
+  exc_intro : forall x:A, P x -> exc (A:=A) P.
+
+Lemma exc_midpoint0 : forall s st tr (h: redm s st tr),
 forall s1 s2, s = Sseq s1 s2 ->
 forall (h1: redm (Sseq s1 s2) st tr),
 JMeq h h1 ->
-redm s1 st (midpoint h1).
+exc (fun tr => midpoint h1 tr).
 Proof.
 cofix COINDHYP. dependent inversion h; subst; move => s2 s3.
-- move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4. 
-  rewrite [midpoint _]trace_destr. simpl. apply: redm_stop.
-  inversion s1; subst. by apply: H1. 
-- move: s st s' st' s1 r h. dependent inversion s1; subst. 
-  - move => h1 h2 h3. by inversion h3. 
-  - move => h1 h2 h3 h4 h5. foo h3. have h6 := JMeq_eq h5.
-     rewrite -h6. rewrite [midpoint _]trace_destr. simpl. apply: (redm_step s5).
-     apply: COINDHYP. apply refl_equal. apply JMeq_refl. 
-  - move => h1 h2 h3 h4 h5. foo h3. have h6 := JMeq_eq h5. rewrite -h6.
-    rewrite [midpoint _]trace_destr. simpl. by apply: (redm_stop _ s5). 
-  - move => h1 h2 h3. by inversion h3. 
-  - move => h1 h2 h3. by inversion h3. 
-  - move => h1 h2 h3. by inversion h3. 
-  - move => h1 h2 h3. by inversion h3. 
+- move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4.
+  exists (Tnil st).
+  by apply midpoint_stop_seq.
+- move: s s' st st' s1 s2 s3 tr0 h r.
+  dependent inversion s1; subst.
+  * by move => s2 s3 tr0 h1 h2 h3; inversion h3.
+  * move => s4 s5 tr0 h1 h2 h3 h4 h5.
+    foo h3.
+    have h6 := JMeq_eq h5. rewrite -h6.
+    have h2j: JMeq h2 h2 by apply JMeq_refl.
+    have hs1: (s1';; s5) = (s1';; s5) by [].
+    case (COINDHYP _ _ _ _ _ _ hs1 _ h2j) => tr' hm.
+    exists (Tcons st tr'). 
+    by apply midpoint_more with (s1' := s1') (st' := st') (tr0 := tr0) (h' := h2).
+  * move => s5 s6 tr0 h1 h2 h3 h4 h5.
+    foo h3.
+    have h6 := JMeq_eq h5. rewrite -h6.
+    exists (Tnil st).
+    by apply midpoint_stop_s1 with (s' := s') (st' := st') (tr0 := tr0).
+  * move => s0 s3 tr0 h1 h2 h3. by inversion h3.
+  * move => s2 s3 tr0 h1 h2 h3. by inversion h3.
+  * move => s2 s3 tr0 h1 h2 h3. by inversion h3.
+  * move => s2 s3 tr0 h1 h2 h3. by inversion h3.
 Qed.
 
-Lemma midpoint_before: forall s1 s2 st tr (h: redm (Sseq s1 s2) st tr),
-redm s1 st (midpoint h).
+Lemma exc_midpoint : forall (s1 s2: stmt) (st: state) (tr: trace)
+ (h: redm (Sseq s1 s2) st tr), exc (fun tr => midpoint h tr).
 Proof.
-move => s1 s2 st tr h. by apply: (midpoint_before0 (refl_equal _) (JMeq_refl _)).
-Qed.  
+move => s1 s2 st tr h.
+by apply: (exc_midpoint0 (refl_equal _) (JMeq_refl _)).
+Qed.
+
+Lemma ex_midpoint : forall (s1 s2: stmt) (st: state) (tr: trace)
+ (h: redm (Sseq s1 s2) st tr), exists tr, midpoint h tr.
+Proof.
+move => s1 s2 st tr h.
+have hexc := exc_midpoint h.
+case hexc => tr0 hm.
+by exists tr0.
+Qed.
+
+Lemma midpoint_before0: forall s st tr tr' (h: redm s st tr),
+forall s1 s2, s = Sseq s1 s2 ->
+forall (h1: redm (Sseq s1 s2) st tr),
+JMeq h h1 ->
+midpoint h1 tr' ->
+redm s1 st tr'.
+Proof.
+cofix COINDHYP. dependent inversion h; subst; move => s2 s3.
+- move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4.
+  inversion s1; subst.
+  move => hm. foo hm.
+  * by apply redm_stop.
+  * by apply stop_step_exclusive in H3.
+  * by apply stop_step_exclusive in H.
+- move: s st s' st' s1 r h. dependent inversion s1; subst.
+  * move => h1 h2 h3. by inversion h3.
+  * move => h1 h2 h3 h4 h5. foo h3. have h6 := JMeq_eq h5.
+    rewrite -h6 {h5 h6}.
+    move => hm. foo hm.
+    * foo H.
+      by apply stop_step_exclusive in s5.
+    * by apply stop_step_exclusive in s5.
+    * have Heq: s1'0 = s1' /\ st'0 = st' by apply: step_deterministic; eauto.
+      case: Heq => [s10 st0].
+      subst.
+      apply: (redm_step s5).
+      have hje: JMeq h' h' by apply JMeq_refl.
+      move: hje H0.
+      exact: COINDHYP.
+  - move => h1 h2 h3 h4 h5. foo h3. have h6 := JMeq_eq h5. rewrite -h6 {h5 h6}.
+    move => hm. foo hm.
+    * foo H.
+      by apply stop_step_exclusive in s6.
+    * by apply (redm_stop _ s5).
+    * by apply stop_step_exclusive in H.
+  - move => h1 h2 h3. by inversion h3.
+  - move => h1 h2 h3. by inversion h3.
+  - move => h1 h2 h3. by inversion h3.
+  - move => h1 h2 h3. by inversion h3.
+Qed.
+
+Lemma midpoint_before: forall s1 s2 st tr tr' (h: redm (Sseq s1 s2) st tr),
+midpoint h tr' ->
+redm s1 st tr'.
+Proof.
+move => s1 s2 st tr tr' h. by apply: (midpoint_before0 (refl_equal _) (JMeq_refl _)).
+Qed.
 
 CoInductive redm_str: stmt -> trace -> trace -> Prop :=
-| redm_nil: forall s st tr, 
+| redm_nil: forall s st tr,
   redm s st tr ->
   redm_str s (Tnil st) tr
 | redm_cons: forall s tr tr' st,
   redm_str s tr tr' ->
   redm_str s (Tcons st tr) (Tcons st tr').
+
+Lemma midpoint'_after0: forall s st tr (h: redm s st tr),
+forall s1 s2, s = Sseq s1 s2 ->
+forall (h1: redm (Sseq s1 s2) st tr),
+JMeq h h1 ->
+redm_str s2 (midpoint h1) tr.
+Proof.
+cofix COINDHYP. dependent inversion h; subst; move => s2 s3.
+- move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4. 
+  rewrite [midpoint _]trace_destr. simpl. apply: redm_nil.
+  inversion s1; subst. by apply: (redm_stop _ H2).  
+- move: s st s' st' s1 r h. dependent inversion s1; subst. 
+  - move => h1 h2 h3. by inversion h3. 
+  - move => h1 h2 h3 h4 h5. foo h3. have h6 := JMeq_eq h5.
+    rewrite -h6. rewrite [midpoint _]trace_destr. simpl.
+    by apply: (redm_cons _ (COINDHYP _ _ _ _ _ _ (refl_equal _) _ (JMeq_refl _))).
+  - move => h1 h2 h3 h4 h5. foo h3. have h6 := JMeq_eq h5. rewrite -h6. 
+    rewrite [midpoint _]trace_destr. simpl. apply: redm_nil.
+    by apply: (redm_step s6 h1).  
+  - move => h1 h2 h3. by inversion h3. 
+  - move => h1 h2 h3. by inversion h3. 
+  - move => h1 h2 h3. by inversion h3. 
+  - move => h1 h2 h3. by inversion h3. 
+Qed. 
 
 Lemma midpoint_after0: forall s st tr (h: redm s st tr),
 forall s1 s2, s = Sseq s1 s2 ->
