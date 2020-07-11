@@ -86,12 +86,12 @@ Proof.
 induction 1. 
 - by simpl.
 - simpl. rewrite IHstep. simpl. done. 
-- simpl. have h1 := stop_then_red st s. rewrite h1. rewrite IHstep. done. 
-- simpl. rewrite e. done. 
-- simpl. by rewrite e. 
-- simpl. by rewrite e.
-- simpl. by rewrite e. 
-Qed.   
+- simpl. have h1 := stop_then_red st H. rewrite h1. rewrite IHstep. done. 
+- simpl. rewrite H. done. 
+- simpl. by rewrite H. 
+- simpl. by rewrite H.
+- simpl. by rewrite H. 
+Qed.
  
 (* the small-step functional semantics correct wrt the small-step relational semantics. *)
 Lemma Redm_correct_redm: forall st s, redm s st (Redm s st).

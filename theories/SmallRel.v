@@ -3,8 +3,6 @@ Require Import Trace.
 Require Import Language. 
 Require Import BigRel. 
 Require Import JMeq.
-From Coinduction Require Import Coinduction Tactics.
-From Hammer Require Import Tactics.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -46,27 +44,6 @@ CoInductive redm: stmt -> state -> trace -> Prop :=
   step s st s' st' ->
   redm s' st' tr ->
   redm s st (Tcons st tr).
-
-Section redm_coind.
-Variable R : stmt -> state -> trace -> Prop.
-
-Hypothesis redm_stop_case : forall s st st', R s st (Tnil st') -> st = st' /\ stop s.
-Hypothesis redm_step_case : forall s st st' tr, R s st (Tcons st' tr) ->
- st = st' /\ exists s' st', step s st s' st' /\ R s' st' tr.
-
-Theorem redm_coind : forall s st tr, R s st tr -> redm s st tr.
-Proof.
-cofix f; intros; destruct tr.
-- apply redm_stop_case in H.
-  case: H =>-> => H.
-  by apply redm_stop.
-- apply redm_step_case in H.
-  case: H =><- {s0}. case => s'; case => st' [hs hr].  
-  apply: redm_step.
-  * by apply: hs.
-  * by apply: f.
-Qed.
-End redm_coind.
 
 Lemma stop_step_exclusive: forall s st s' st',
 stop s -> step s st s' st' -> False.
@@ -118,29 +95,7 @@ move => st s tr1 tr2  h1 h2. foo h1.
 Qed.
 
 (* setoid *)
-Lemma redm_insensitive: 
-forall s st tr1 tr2, redm s st tr1 -> bisim tr1 tr2 ->
-redm s st tr2. 
-Proof.
-move => s st tr1 tr2 hr hb.
-apply (@redm_coind (fun s st tr2 => exists tr1, redm s st tr1 /\ bisim tr1 tr2)).
-- move {hr hb s st tr1 tr2}.
-  move => s st st'; case => tr1; case => [hr hb].
-  foo hb.
-  by foo hr.
-- move {hr hb s st tr1 tr2}.
-  move => s st st' tr2.
-  case => tr1 [hr hb].
-  foo hb.
-  foo hr.
-  split => //.
-  exists s'; exists st'0.
-  split => //.
-  by exists tr.
-- by exists tr1.
-Qed.
-
-Lemma redm_insensitive': 
+Lemma redm_insensitive:
 forall s st tr1 tr2, redm s st tr1 -> bisim tr1 tr2 ->
 redm s st tr2. 
 Proof.
@@ -240,59 +195,6 @@ CoInductive midpoint (s1 s2: stmt) (st: state) (tr: trace)
     @midpoint s1' s2 st' tr0 h' tr' ->
     midpoint h (Tcons st tr').
 
-CoInduction exc_midpoint0 : forall s st tr (h: redm s st tr),
-forall s1 s2, s = Sseq s1 s2 ->
-forall (h1: redm (Sseq s1 s2) st tr),
-JMeq h h1 ->
-exists tr, midpoint h1 tr.
-Proof.
-dependent inversion h; subst; move => s2 s3.
-- move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4.
-  exists (Tnil__g trace__r st).
-  by constructor.
-- move: s s' st st' s1 s2 s3 tr0 h r.
-  dependent inversion s1; subst.
-  * by move => s2 s3 tr0 h1 h2 h3; inversion h3.
-  * move => s4 s5 tr0 h1 h2 h3 h4 h5.
-    foo h3.
-    have h6 := JMeq_eq h5. rewrite -h6.
-    have h2j: JMeq h2 h2 by apply JMeq_refl.
-    have hs1: (s1';; s5) = (s1';; s5) by [].
-    have [tr' hm] := CH _ _ _ _ _ _ hs1 _ h2j.
-    eexists.
-    econstructor 3.
-    - by apply s3.
-    - by apply hm.
-  * move => s5 s6 tr0 h1 h2 h3 h4 h5.
-    foo h3.
-    have h6 := JMeq_eq h5. rewrite -h6.
-    exists (Tnil__g trace__r st).
-    econstructor 2.
-    - by apply h2.
-    - by apply s3.
-    - by apply s4.
-  * move => s0 s3 tr0 h1 h2 h3. by inversion h3.
-  * move => s2 s3 tr0 h1 h2 h3. by inversion h3.
-  * move => s2 s3 tr0 h1 h2 h3. by inversion h3.
-  * move => s2 s3 tr0 h1 h2 h3. by inversion h3.
-Qed.
-
-Lemma exc_midpoint : forall (s1 s2: stmt) (st: state) (tr: trace)
- (h: redm (Sseq s1 s2) st tr), exc (fun tr => midpoint h tr).
-Proof.
-move => s1 s2 st tr h.
-by apply: (exc_midpoint0 (refl_equal _) (JMeq_refl _)).
-Qed.
-
-Lemma ex_midpoint : forall (s1 s2: stmt) (st: state) (tr: trace)
- (h: redm (Sseq s1 s2) st tr), exists tr, midpoint h tr.
-Proof.
-move => s1 s2 st tr h.
-have hexc := exc_midpoint h.
-case hexc => tr0 hm.
-by exists tr0.
-Qed.
-
 Lemma midpoint_before0: forall s st tr tr' (h: redm s st tr),
 forall s1 s2, s = Sseq s1 s2 ->
 forall (h1: redm (Sseq s1 s2) st tr),
@@ -349,30 +251,7 @@ CoInductive redm_str: stmt -> trace -> trace -> Prop :=
   redm_str s tr tr' ->
   redm_str s (Tcons st tr) (Tcons st tr').
 
-Lemma midpoint'_after0: forall s st tr (h: redm s st tr),
-forall s1 s2, s = Sseq s1 s2 ->
-forall (h1: redm (Sseq s1 s2) st tr),
-JMeq h h1 ->
-redm_str s2 (midpoint h1) tr.
-Proof.
-cofix COINDHYP. dependent inversion h; subst; move => s2 s3.
-- move => h1 h2. subst. move => h3. have h4 := JMeq_eq h3. rewrite -h4. 
-  rewrite [midpoint _]trace_destr. simpl. apply: redm_nil.
-  inversion s1; subst. by apply: (redm_stop _ H2).  
-- move: s st s' st' s1 r h. dependent inversion s1; subst. 
-  - move => h1 h2 h3. by inversion h3. 
-  - move => h1 h2 h3 h4 h5. foo h3. have h6 := JMeq_eq h5.
-    rewrite -h6. rewrite [midpoint _]trace_destr. simpl.
-    by apply: (redm_cons _ (COINDHYP _ _ _ _ _ _ (refl_equal _) _ (JMeq_refl _))).
-  - move => h1 h2 h3 h4 h5. foo h3. have h6 := JMeq_eq h5. rewrite -h6. 
-    rewrite [midpoint _]trace_destr. simpl. apply: redm_nil.
-    by apply: (redm_step s6 h1).  
-  - move => h1 h2 h3. by inversion h3. 
-  - move => h1 h2 h3. by inversion h3. 
-  - move => h1 h2 h3. by inversion h3. 
-  - move => h1 h2 h3. by inversion h3. 
-Qed. 
-
+(*
 Lemma midpoint_after0: forall s st tr (h: redm s st tr),
 forall s1 s2, s = Sseq s1 s2 ->
 forall (h1: redm (Sseq s1 s2) st tr),
@@ -440,8 +319,7 @@ have COINDHYP2: forall s tr1 tr2, redm_str s tr1 tr2 -> execseq s tr1 tr2.
         apply: (exec_while_loop H6). apply execseq_cons.  apply: execseq_nil. 
         apply (COINDHYP _ _ _ h2). apply: execseq_cons. apply: (COINDHYP2 _ _ _ h3). 
 Qed.      
-
-
+*)
 
 (* adequacy relative to the inductive semantics *)
 Inductive norm: stmt -> state -> state -> Prop :=
@@ -465,15 +343,15 @@ induction 1.
 - move => s st1 h1. foo h1. by apply: (norm_nil _ H2). 
 - move => s st1 h1. foo h1. apply: (norm_cons H4). by apply: (IHresult _ _ H5). 
 Qed.
- 
+
 Lemma norm_correct_redm: forall s st st',
-norm s st st' -> sigT (fun tr => prod (redm s st tr) (result tr st')).
+ norm s st st' -> exists tr, redm s st tr /\ result tr st'.
 Proof.
 move => s st st' h1. induction h1. 
 - exists (Tnil st). split.
-  * by apply: (redm_stop _ s0).
+  * by apply: (redm_stop _ _).
   * by apply: res_return.  
 - move: IHh1 => [tr [h2 h3]].  exists (Tcons st tr). split. 
-  * by apply: (redm_step s0 h2).
+  * by apply: (redm_step _ h2).
   * by apply: (res_step _  h3). 
 Qed.
