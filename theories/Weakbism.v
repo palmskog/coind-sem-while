@@ -3,6 +3,7 @@ Require Import Trace.
 Require Import Language. 
 Require Import Semax.
 Require Import Assert.
+Require Import AssertClassical.
 Require Import Lia.
 
 Set Implicit Arguments.
@@ -125,10 +126,11 @@ Qed.
 Lemma Sn: forall n, n + 1 = S n. 
 Proof. 
 move => n. by lia.
-Qed. 
+Qed.
+
+Require Import ClassicalEpsilon.
 
 (* Proposition 5.3 *)
-(*
 Lemma spec: semax u0 s (Up 0).
 Proof. 
 rewrite /s. 
@@ -145,29 +147,29 @@ Iter (Updt (ttS andS a_t) y (fun st : state => st y - 1) *** (<< ttS >>)) ***
 * clear h2. move => tr0 h0. simpl. simpl in h0. move h1: (hd tr0 y) => n. 
   move: tr0 h1 h0. induction n. 
   - move => tr0 h0 [tr1 [h1 h2]]. move: h1 => [st0 [_ h1]]. foo h1. foo H1. 
-    foo h2. simpl in h0. foo X. move: X0 => [tr0 [h1 h2]]. foo h1. 
-    - foo h2. move: X => [st0 [_ h1]]. foo h1. simpl. apply skips_delay. 
+    foo h2. simpl in h0. foo H2. move: H1 => [tr0 [h1 h2]]. foo h1. 
+    - foo h2. move: H1 => [st0 [_ h1]]. foo h1. simpl. apply skips_delay. 
       by apply skips_nil. by simpl. 
-    - move: X => [tr1 [h1 h3]]. move: h1 => [st0 [[_ h1] h4]].
-      foo h4. foo h3. foo X0. foo h2. simpl in h0. absurd False.
+    - move: H => [tr1 [h1 h3]]. move: h1 => [st0 [[_ h1] h4]].
+      foo h4. foo h3. foo H0. foo h2. simpl in h0. absurd False.
       done. have := cond_tt h1 h0. by apply. 
   - move => tr0 h0 [tr1 [h1 h2]]. move: h1 => [st0 [_ h3]]. foo h3. foo H1.
-    foo h2. simpl in h0. foo X. apply skips_delay; last done. 
-    move: X0 => [tr0 [h1 h2]]. foo h1. 
-    - foo h2. move: X => [st0 [h1 h2]]. foo h2. apply skips_nil. 
-    - move: X => [tr1 [h1 h3]]. move: h1 => [st0 [h1 h4]]. foo h4. foo H1. 
-      foo h3. foo X0. foo X. foo h2. simpl in h0. 
-      have h2: skips tr'1. apply IHn => {IHn}. have h2 := follows_hd X1. 
+    foo h2. simpl in h0. foo H2. apply skips_delay; last done. 
+    move: H1 => [tr0 [h1 h2]]. foo h1. 
+    - foo h2. move: H1 => [st0 [h1 h2]]. foo h2. apply skips_nil. 
+    - move: H => [tr1 [h1 h3]]. move: h1 => [st0 [h1 h4]]. foo h4. foo H2. 
+      foo h3. foo H0. foo H3. foo h2. simpl in h0. 
+      have h2: skips tr'1. apply IHn => {IHn}. have h2 := follows_hd H4. 
       rewrite -h2 => {h2}. rewrite H0 => {H0}. rewrite h0 => {h0}. 
       rewrite /update. have h0: Zeq_bool y y = true. by rewrite -Zeq_is_eq_bool.
       rewrite h0 => {h0}. by apply Sn_1. exists tr'0. split; first done. 
-      move: X0 => [st1 [_ h2]]. foo h2. simpl in H0. foo H2. foo X1.   
-      apply follows_delay. foo X0. foo X. apply follows_nil => //. 
-      exists tr'. split; first done. have h2 := follows_singleton X0. 
-      have := follows_setoid_R (@singleton_setoid _) X0 (bisim_symmetric h2).
-      by apply. apply skips_delay. have h3 := follows_singleton X. 
-      have := skips_setoid h2 h3. by apply. have h3 := follows_hd X. 
-      rewrite -h3 => {h3}. clear h2 h0 X X0. have h0 := follows_hd X1 => {X1}.
+      move: H1 => [st1 [_ h2]]. foo h2. simpl in H0. foo H2. foo H4.
+      apply follows_delay. foo H2. foo H5. apply follows_nil => //. 
+      exists tr'. split; first done. have h2 := follows_singleton H4. 
+      have := follows_setoid_R (@singleton_setoid _) H4 (bisim_symmetric h2).
+      by apply. apply skips_delay. have h3 := follows_singleton H5. 
+      have := skips_setoid h2 h3. by apply. have h3 := follows_hd H5. 
+      rewrite -h3 => {h3}. clear h2 h0 H1 H5. have h0 := follows_hd H4 => {H4}.
       rewrite -h0 => {h0}. rewrite H0 => {H0}. rewrite /update.    
       rewrite yx. done. 
 have h1 := semax_conseq_R h0 h2 => {h0 h2}. 
@@ -190,15 +192,15 @@ have h0: (<<u0>> *** Iter ((Skips *** Updt ttS x (fun st => st x + 1))
 *** <<ttS>>) *** [| eval_false tt |]) =>> (Up 0). 
 * clear h1. move => tr0 h0. simpl. simpl in h0. 
   move: h0 => [tr1 [h0 h1]]. move: h0 => [st0 [h0 h2]]. rewrite /u0 in h0.
-  foo h2. foo H1. foo h1. foo X. move: X0 => [tr0 [h1 h2]].  
+  foo h2. foo H1. foo h1. foo H2. move: H1 => [tr0 [h1 h2]].  
   have: forall n tr0 tr1, hd tr1 x = n -> 
   iter (append (append (fun tr => skips tr)
   (updt ttS x (fun st => st x + 1))) (dup ttS)) tr0 -> 
   follows (singleton (eval_false tt)) tr0 tr1 -> up n (Tcons (hd tr1) tr1).
   * clear tr' h0 tr0 h1 h2. cofix hcoind. move => n tr0 tr1 h0 h1 h2. foo h1. 
-    - foo h2. move: X => [st0 [h0 h1]]. rewrite /eval_false in h0. clear h1. 
+    - foo h2. move: H1 => [st0 [h0 h1]]. rewrite /eval_false in h0. clear h1. 
       rewrite tt_true in h0. foo h0. 
-    - move: X => [tr2 [h0 h1]]. move: h0 => [tr3 [h0 h3]].
+    - move: H => [tr2 [h0 h1]]. move: h0 => [tr3 [h0 h3]].
       have h4: forall tr3, skips tr3 -> 
       forall tr2, follows (updt ttS x (fun st => st x + 1)) tr3 tr2 ->
       forall tr, follows (dup ttS) tr2 tr ->
@@ -206,52 +208,52 @@ have h0: (<<u0>> *** Iter ((Skips *** Updt ttS x (fun st => st x + 1))
           (append (append (fun tr : trace => skips tr)
            (updt ttS x (fun st : state => st x + 1))) (dup ttS))) tr tr0 ->
       forall tr1, follows (singleton (eval_false tt)) tr0 tr1 ->   
-      {tr4: trace & 
-      ((red (Tcons (hd tr1) tr1) (Tcons (hd tr4) tr4)) *
-        (hd tr4 x = S (hd tr1 x)) *     
+      exists tr4 : trace,
+      ((red (Tcons (hd tr1) tr1) (Tcons (hd tr4) tr4)) /\
+        (hd tr4 x = S (hd tr1 x)) /\
         (iter (append
          (append (fun tr : trace => skips tr)
-         (updt ttS x (fun st : state => (st x + 1)%nat))) (dup ttS)) tr4) * 
-         (follows (singleton (eval_false tt)) tr4 tr4))%type}.
-       * clear hcoind tr0 tr1 h2 tr X0 tr2 h1 tr3 h0 h3. induction 1. 
+         (updt ttS x (fun st : state => (st x + 1)%nat))) (dup ttS)) tr4) /\
+         (follows (singleton (eval_false tt)) tr4 tr4)).
+       * clear hcoind tr0 tr1 h2 tr H0 tr2 h1 tr3 h0 h3. induction 1. 
           - move => tr0 h0 tr1 h1 tr2 h2 tr3 h3. foo h0. 
-            move: X => [st0 [h0 h4]]. foo h4. foo h1. foo H1. clear h0. 
-            foo X. foo h2. move: X0 => [st1 [h0 h1]]. foo h1. foo H2. 
-            simpl in H0. foo X. clear h0. foo X0. foo h3. foo X0. exists tr'.
-            have h0 := follows_hd X1. 
-            have h1 := follows_singleton X1. 
-            split. split. split. simpl. apply red_tau. by simpl. apply red_stop. 
+            move: H1 => [st0 [h0 h4]]. foo h4. foo h1. foo H1. clear h0. 
+            foo H3. foo h2. move: H1 => [st1 [h0 h1]]. foo h1. foo H2. 
+            simpl in H0. foo H4. clear h0. foo H3. foo h3. foo H4. exists tr'.
+            have h0 := follows_hd H5. 
+            have h1 := follows_singleton H5. 
+            split. apply red_tau. by simpl.
+            apply red_stop.
             simpl. rewrite /update. 
             have h: Zeq_bool x x = true; first by rewrite -Zeq_is_eq_bool.
             rewrite h => {h}. omega. rewrite H0. 
             apply bisim_cons. have := bisim_symmetric h1. by apply.
             simpl. rewrite H0. rewrite /update. have h: Zeq_bool x x = true;
-            first by rewrite -Zeq_is_eq_bool. rewrite h => {h}.  by apply Sn.
-            by apply X. have := follows_setoid _ X1 _ (bisim_symmetric h1). apply.
+            first by rewrite -Zeq_is_eq_bool. rewrite h => {h}.  split. by apply Sn. split.
+            by apply H1. have := follows_setoid _ H5 _ (bisim_symmetric h1). apply.
             move => tr0 h2 tr1 h3. move: h2 => [st1 [h2 h4]]. foo h4.
             exists st1. split => //. have := bisim_symmetric h3. by apply. 
             by apply bisim_reflexive. 
           - move => tr0 h0 tr1 h1 tr2 h2 tr3 h3. foo h0. 
-            have h0 := IHskips _ X => {IHskips}. foo h1. 
-            have h1 := h0 _ X0 => {h0}. foo h2. 
-            have h2 := h1 _ X1 => {h1}. foo h3. 
-            have h3 := h2 _ X2 => {h2}. move: h3 => [tr0 [[[h3 h0] h1] h2]].
-            simpl. rewrite -e.  
-            have h4 := follows_hd X; rewrite h4 => {X}.
-            have h5 := follows_hd X0; rewrite h5  => {X0}.
-            have h6 := follows_hd X1; rewrite h6  => {X1}. 
-            have h7 := follows_hd X2; rewrite h7 => {X2}. 
+            have h0 := IHskips _ H4 => {IHskips}. foo h1. 
+            have h1 := h0 _ H5 => {h0}. foo h2. 
+            have h2 := h1 _ H6 => {h1}. foo h3. 
+            have h3 := h2 _ H7 => {h2}. move: h3 => [tr0 [h3 [h0 [h1 h2]]]].
+            simpl. rewrite -H0.  
+            have h4 := follows_hd H4; rewrite h4 => {H4}.
+            have h5 := follows_hd H5; rewrite h5  => {H5}.
+            have h6 := follows_hd H6; rewrite h6  => {H6}. 
+            have h7 := follows_hd H7; rewrite h7 => {H7}. 
             rewrite -h0. 
-            exists tr0. simpl. split => //. split => //. clear h1 h2. 
-            split => //. apply red_tau. simpl. reflexivity. foo h3. 
-            absurd False. done. apply H2. reflexivity. apply red_tau. 
-            rewrite -e; rewrite h4. rewrite h5; rewrite h6; rewrite h7. 
-            reflexivity. by apply H4.                  
-     have h := h4 _ h0 _ h3 _ h1 _ X0 _ h2 => {h4 h0 h3 h1 X0 h2}. 
-     move: h => [tr4 [[[h4 h7] h5] h6]].
+            exists tr0. split => //. clear h1 h2. 
+            apply red_tau. simpl. reflexivity. foo h3. 
+            absurd False. done. apply H3. reflexivity. apply red_tau. 
+            rewrite -H0; rewrite h4. rewrite h5; rewrite h6; rewrite h7. 
+            reflexivity. by apply H5.
+     have h := h4 _ h0 _ h3 _ h1 _ H0 _ h2 => {h4 h0 h3 h1 H0 h2}. 
+     move: h => [tr4 [h4 [h7 [h5 h6]]]].
      have := up_intro _ h4. apply. reflexivity. 
      have := hcoind _ _ _ _ _ h6. apply. by apply h7. apply h5. 
      move => h3. have := h3 _ _ _ h0 h1 h2. by apply. 
   have := semax_conseq_R h0 h1. by apply. 
 Qed.
-*)

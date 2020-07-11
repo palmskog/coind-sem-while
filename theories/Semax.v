@@ -3,6 +3,7 @@ Require Import Setoid.
 Require Import Trace.
 Require Import Language.
 Require Import Assert.
+Require Import AssertClassical.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -55,7 +56,6 @@ apply. done.
 Qed.   
 
 (* Lemma 3.5 *)
-(*
 Lemma push_pre: forall u s p, semax u s p -> semax u s ([|u|] *** p). 
 Proof. 
 have: forall u s p, semax u s p -> forall v, semax (u andS v) s ([|v|] *** p).
@@ -77,11 +77,11 @@ induction 1.
   have := assertT_imp_trans _ (@Append_assoc_L _ _ _). apply.
   apply Append_monotone_R. apply Singleton_Append.      
   move => st0 h0. split => //. 
-- move => v. have hs1 := IHX1 v => {IHX1}.
+- move => v. have hs1 := IHsemax1 v => {IHsemax1}.
   have h0: ((u andS v) andS eval_true a) ->> ((u andS eval_true a) andS v).
   * move => st0 [[h0 h1] h2] => //.
   have := semax_conseq_L h0 hs1 => {hs1}. move => hs1.   
-  have hs2 := IHX2 v => {IHX2}. clear h0. 
+  have hs2 := IHsemax2 v => {IHsemax2}. clear h0. 
   have h0: ((u andS v) andS eval_false a) ->> ((u andS eval_false a) andS v).
   * move => st0 [[h0 h1] h2] => //.
   have := semax_conseq_L h0 hs2 => {hs2}. move => hs2.
@@ -90,11 +90,11 @@ induction 1.
   have := assertT_imp_trans (@Append_assoc_R _ _ _). apply.
   have := assertT_imp_trans _ (@Append_assoc_L _ _ _). apply. 
   apply Append_monotone_L. move => tr0. simpl. move => [tr1 [h0 h1]].
-  destruct h0 as [st0 [h0 h2]]. foo h2. foo H1. destruct h0 as [h0 h2]. 
-  foo h1. foo X. destruct X0 as [st0 [h1 h3]]. foo h3. simpl in h0. simpl in h2. 
+  destruct h0 as [st0 [h0 h2]]. foo h2. foo H3. destruct h0 as [h0 h2]. 
+  foo h1. foo H4. destruct H3 as [st0 [h1 h3]]. foo h3. simpl in h0. simpl in h2. 
   simpl. exists (Tnil st0). split. exists st0; split => //. apply bisim_reflexive. 
   apply follows_nil => //. exists st0. split => //. apply bisim_reflexive. 
-- move => v. have := IHX ttS => {IHX}. 
+- move => v. have := IHsemax ttS => {IHsemax}. 
   move => hs. have hpre: (u andS eval_true a) ->> 
   (u andS eval_true a) andS ttS. move => st0 [h0 h1]. split => //. 
   have := semax_conseq_L hpre hs => {hs hpre}. move => hs. 
@@ -102,12 +102,12 @@ induction 1.
   have := semax_conseq_R _ (semax_while _ hs). apply.
   have := assertT_imp_trans _ (@Append_assoc_L _ _ _). apply.
   apply Append_monotone_L. move => tr0 [st0 [h0 h1]]. destruct h0 as [h0 h2]. 
-  foo h1. foo H1. simpl. exists (Tnil st0). split. exists st0. split => //. 
+  foo h1. foo H3. simpl. exists (Tnil st0). split. exists st0. split => //. 
   apply bisim_reflexive. apply follows_nil => //. exists st0. split => //. 
-  apply bisim_reflexive. move => st0 [h0 h1]. have := a0 _ h0. done. 
-- move => v. have hs := IHX v => {IHX}. 
+  apply bisim_reflexive. move => st0 [h0 h1]. have := H _ h0. done. 
+- move => v. have hs := IHsemax v => {IHsemax}. 
   have := semax_conseq _ _ hs. apply. move => st0 [h0 h1].
-  split => //. have := a _ h0. done. apply Append_monotone_R. done. 
+  split => //. have := H _ h0. done. apply Append_monotone_R. done. 
 - move => v. have hpre: (exS u andS v) ->> exS (fun x => u x andS v). 
   * move => st0 [h0 h1]. destruct h0 as [x h0]. exists x. split => //. 
   have hpost: (exT (fun x => [|v|] *** p x)) =>> ([|v|] *** exT p).
@@ -117,8 +117,7 @@ induction 1.
     exists (Tnil (hd tr0)). split. exists (hd tr0). split => //.  apply bisim_reflexive. 
     apply follows_nil => //. exists x. rewrite hp. simpl. done. 
   have := semax_conseq hpre hpost. apply. apply semax_ex. 
-  clear hpre hpost. move => x. have := X _ v. done. 
+  clear hpre hpost. move => x. have := H0 _ v. done. 
 move => h u s p hs. have := h _ _ _ hs => {hs}. move => hs.
 have := semax_conseq_L _ (hs _). apply. done.
 Qed.
-*)
