@@ -386,66 +386,63 @@ Proof. move => p q. cofix hcoind. case.
   have := hcoind _ _ _ H2 H3. apply.
 Qed.
 
-(*
-Section Hej.
-Variable (p0 p1: trace -> Prop)  (tr0 tr1: trace) (h: follows (append p0 p1) tr0 tr1).
+CoInductive midp (p0 p1: trace -> Prop) (tr0 tr1: trace) (h: follows (append p0 p1) tr0 tr1) : trace -> Prop :=
+| midp_follows_nil :
+   forall tr, tr0 = Tnil (hd tr1) -> p0 tr -> follows p1 tr tr1 -> midp h tr
+| midp_follows_delay :
+  forall (tr2 tr3 :trace) (h1: follows (append p0 p1) tr2 tr3) (st : state) tr',
+  tr0 = Tcons st tr2 -> tr1 = Tcons st tr3 -> @midp p0 p1 tr2 tr3 h1 tr' ->
+  midp h (Tcons st tr').
 
-Lemma bla : True.
-Proof.
-inversion h.
-- case H0; intros. apply I.
-- subst.
-  Print follows_delay.
-  inversion h; subst.
-  
-
-CoInductive midp (p0 p1: trace -> Prop)  (tr0 tr1: trace) (h: follows (append p0 p1) tr0 tr1) : trace -> Prop :=
-| midp_follows_nil : forall tr, p0 tr -> follows p1 tr tr1 -> midp h tr
-| midp_follows_delay : @midp p0 p1  -> midp h (Tcons st)
-
-                             follows (append p0 p1) tr tr'
-*)
-
-(*
-CoFixpoint midp (p0 p1: trace -> Type)  (tr0 tr1: trace) (h: follows (append p0 p1) tr0 tr1): trace :=
-match h with
-| follows_nil _ _ _ h1 => let: existT tr2 h2 := h1 in tr2
-| follows_delay st tr2 tr3 h1 => Tcons st (midp h1)
-end. 
-
-Lemma midp_before: forall p0 p1 tr0 tr1 (h: follows (append p0 p1) tr0 tr1),
-follows p0 tr0 (midp h).
+Lemma midp_before: forall p0 p1 tr0 tr1 (h: follows (append p0 p1) tr0 tr1) tr',
+midp h tr' ->
+follows p0 tr0 tr'.
 Proof.
 cofix COINDHYP. dependent inversion h. move => {tr H0}.
 - move: tr1 st tr0 h e a H. case. 
   - move => st0 st1 tr0 h1 h2 h3 h4. simpl in h2.  
-rewrite [midp _]trace_destr. simpl. destruct h3. destruct p. inversion f. 
-subst. simpl. simpl in p. apply follows_nil. by simpl. done. 
-- move => st0 tr0 st1 tr1 h1 h2 h3 h4. simpl in h2.     
-rewrite [midp _]trace_destr. simpl. destruct h3. destruct p. subst. inversion f.
-subst. simpl. apply follows_nil. by simpl.  by simpl in p. 
-- subst. apply follows_nil. by simpl. by apply p. 
-- subst. rewrite [midp _]trace_destr. simpl. apply follows_delay. 
-  have := COINDHYP _ _ _ _ f; apply. 
-Qed. 
- 
-Lemma midp_after: forall p0 p1 tr0 tr1 (h: follows (append p0 p1) tr0 tr1),
-follows p1 (midp h) tr1.
+    move => tr' hm.
+    foo hm; last by inversion H.
+    destruct h3. destruct H2. inversion h1. 
+    subst. apply follows_nil; last by [].
+    by inversion H1.
+  - move => st0 tr0 st1 tr1 h1 h2 h3 h4. simpl in h2.
+    move => tr' hm.
+    foo hm; last by inversion H.
+    destruct h3. destruct H2. inversion h1.
+    subst. apply follows_nil; last by []. by inversion H1. 
+- subst. 
+  move => tr0 hm.
+  destruct tr0; first by inversion hm.
+  foo hm; subst; first by inversion H.
+  foo H1; subst.
+  foo H2; subst.
+  apply follows_delay. 
+  by have := COINDHYP _ _ _ _ h1; apply. 
+Qed.
+
+Lemma midp_after: forall p0 p1 tr0 tr1 (h: follows (append p0 p1) tr0 tr1) tr',
+midp h tr' ->
+follows p1 tr' tr1.
 Proof.
 cofix COINDHYP. dependent inversion h. move => {tr H0}. 
 - move: tr1 st tr0 h e a H. case. 
-  - move => st0 st1 tr0 h1 h2 h3 h4. simpl in h2. rewrite [midp _]trace_destr. 
-  simpl. destruct h3. destruct p. subst. inversion f. subst. simpl. 
-apply follows_nil. by simpl. apply X. 
-- move => st0 tr0 st1 tr1 h1 h2 h3 h4. simpl in h2. rewrite [midp _]trace_destr. 
-  simpl.  destruct h3. destruct p. subst. inversion f. subst. 
- simpl. apply follows_nil. by simpl. by apply X. 
-subst. by apply f. 
-subst. rewrite [midp _]trace_destr. simpl. apply follows_delay. 
-have := COINDHYP _ _ _ _ f; apply. 
+  * move => st0 st1 tr0 h1 h2 h3 h4. simpl in h2. move => tr' hm.
+    foo hm; last by inversion H. destruct tr'; last by inversion H. destruct h3. destruct H2. inversion H3. subst.
+    apply follows_nil; last by []. by inversion H1. 
+  * move => st0 tr0 st1 tr1 h1 h2 h3 h4. simpl in h2.
+    move => tr' hm. by foo hm; last by inversion H.
+- subst. 
+  move => tr0 hm.
+ destruct tr0; first by inversion hm.
+ foo hm; subst; first by inversion H.
+ foo H1; subst.
+ foo H2; subst.
+ apply follows_delay.
+ by have := COINDHYP _ _ _ _ h1; apply. 
 Qed.
- 
 
+(*
 Lemma append_assoc_R: forall p1 p2 p3,
 forall tr, (append p1 (append p2 p3)) tr ->  (append (append p1 p2)  p3) tr.
 Proof. 
@@ -456,6 +453,7 @@ exists (midp h2). split.
   * have := midp_before h2. by apply.
 - have := midp_after h2. by apply. 
 Qed. 
+*)
 
 Lemma append_assoc_L: forall p1 p2 p3 tr,
 (append (append p1 p2) p3) tr -> append p1 (append p2  p3) tr.
@@ -465,9 +463,8 @@ move: h1 => [h1 h3]. exists tr2. split; first done. clear h1.
 move: tr2 tr0 tr1 h2 h3. cofix COINDHYP. move => tr0 tr1 tr2 h1 h2. foo h2. 
 - have h2 := follows_hd h1. symmetry in h2. have := follows_nil h2.  apply. 
   exists tr2. by split. 
-- foo h1. apply follows_delay. have := COINDHYP _ _ _ X0 X; apply. 
+- foo h1. apply follows_delay. have := COINDHYP _ _ _ H3 H; apply. 
 Qed. 
-*)
 
 (* Proposition 3.1: ** is setoid. *)
 Definition Append (p1 p2: assertT): assertT.  
@@ -491,14 +488,12 @@ Qed.
 *)
 
 (* Lemma 3.4 (4) => *)
-(*
 Lemma Append_assoc_L: forall p1 p2 p3,
 ((p1 *** p2) *** p3) =>> (p1 *** p2 *** p3).
 Proof. 
 move => p1 p2 p3 tr0 h1. destruct p1 as [f1 hf1]. destruct p2 as [f2 hf2]. 
 destruct p3 as [f3 hf3]. simpl. simpl in h1. have := append_assoc_L h1. apply. 
 Qed.
-*)
 
 (* Proposition 3.2: ** is monotone *)
 Lemma Append_monotone: forall p1 p2 q1 q2,
