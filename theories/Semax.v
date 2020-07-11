@@ -8,7 +8,7 @@ Set Implicit Arguments.
 Unset Strict Implicit.
 Import Prenex Implicits.
 
-Inductive semax: assertS -> stmt -> assertT -> Type :=
+Inductive semax: assertS -> stmt -> assertT -> Prop :=
 
 | semax_skip: forall u,   semax u Sskip ([|u|]) 
 
@@ -55,6 +55,7 @@ apply. done.
 Qed.   
 
 (* Lemma 3.5 *)
+(*
 Lemma push_pre: forall u s p, semax u s p -> semax u s ([|u|] *** p). 
 Proof. 
 have: forall u s p, semax u s p -> forall v, semax (u andS v) s ([|v|] *** p).
@@ -68,8 +69,8 @@ induction 1.
   destruct h0 as [h0 h1]. exists (Tnil st0). split. exists st0. split => //. 
   apply bisim_reflexive. apply follows_nil => //. exists st0. split => //. 
   apply bisim_reflexive. 
-- move => v0. have hs1 := IHX1 v0 => {IHX1}.
-  have hs2 := IHX2 v => {IHX2}. 
+- move => v0. have hs1 := IHsemax1 v0 => {IHsemax1}.
+  have hs2 := IHsemax2 v => {IHsemax2}.
   have := semax_conseq_R (@Append_assoc_R _ _ _) hs1.
   clear hs1. move => hs1. have := semax_conseq_R _ (semax_seq hs1 
   (semax_conseq_L _ hs2)). apply.
@@ -120,3 +121,4 @@ induction 1.
 move => h u s p hs. have := h _ _ _ hs => {hs}. move => hs.
 have := semax_conseq_L _ (hs _). apply. done.
 Qed.
+*)

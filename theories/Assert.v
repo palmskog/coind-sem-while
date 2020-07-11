@@ -156,6 +156,10 @@ Lemma singleton_nil: forall u st,
 singleton u (Tnil st) -> u st. 
 Proof. move => u st [st0 [h0 h1]]. foo h1. done. Qed.
 
+Lemma mk_singleton_nil: forall (u : state -> Prop) st,
+u st -> singleton u (Tnil st). 
+Proof. move => u st h0. exists st. split; [ done | apply bisim_reflexive]. Qed. 
+
 (* Proposition 3.1: <U> is setoid *)
 Definition Singleton (u: assertS): assertT. 
 exists (singleton u). 

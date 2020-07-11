@@ -3,6 +3,7 @@ Require Import Trace.
 Require Import Language. 
 Require Import Semax.
 Require Import Assert.
+Require Import Lia.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -20,7 +21,7 @@ Qed.
 
 Variable x: id. 
 
-Inductive red: trace -> trace -> Type :=
+Inductive red: trace -> trace -> Prop :=
 | red_stop: forall st tr tr',
   st x <> hd tr x -> 
   bisim tr tr' -> 
@@ -35,24 +36,24 @@ forall tr2, red tr0 tr2 -> bisim tr1 tr2.
 Proof. 
 induction 1.
 - move => tr0 h0. foo h0. 
-  - have := bisim_transitive (bisim_symmetric b) H3. by apply. 
+  - have := bisim_transitive (bisim_symmetric H0) H5. by apply. 
   - done. 
 - move => tr0 h0. foo h0. 
   - done. 
-  - have := IHred _ H4. by apply. 
+  - have := IHred _ H5. by apply. 
 Qed. 
 
 Lemma red_setoid: forall tr0 tr1, red tr0 tr1 ->
 forall tr2, bisim tr0 tr2 -> forall tr3, bisim tr1 tr3 -> red tr2 tr3. 
 Proof. 
 induction 1. 
-- move => tr0 h0 tr1 h2. foo h0. have h0 := bisim_hd H2. 
-  rewrite h0 in n => {h0}.
-  have := red_stop n (bisim_transitive (bisim_transitive (bisim_symmetric H2) b) h2).
+- move => tr0 h0 tr1 h2. foo h0. have h0 := bisim_hd H4. 
+  rewrite h0 in H => {h0}.
+  have := red_stop H (bisim_transitive (bisim_transitive (bisim_symmetric H4) H0) h2).
   by apply.
-- move => tr0 h0 tr1 h1. foo h0. have h2 := bisim_hd H3. 
-  rewrite h2 in e => {h2}. 
-  have := red_tau e. apply. have := IHred _ H3 _ h1. by apply. 
+- move => tr0 h0 tr1 h1. foo h0. have h2 := bisim_hd H4. 
+  rewrite h2 in H => {h2}. 
+  have := red_tau H. apply. have := IHred _ H4 _ h1. by apply. 
 Qed.
  
 CoInductive up: nat -> trace -> Prop :=
@@ -77,7 +78,7 @@ move => tr0 h0 tr1 h1.
 have := up_setoid h0 h1. by apply. 
 Defined.  
 
-Inductive skips: trace -> Type :=
+Inductive skips: trace -> Prop :=
 | skips_nil: forall st, skips (Tnil st)
 | skips_delay: forall st tr,
   skips tr -> hd tr x = st x -> skips (Tcons st tr). 
@@ -88,7 +89,7 @@ Proof.
 induction 1. 
 - move => st0 h0. foo h0. by apply skips_nil.
 - move => tr0 h0. foo h0. apply skips_delay. 
-  have := IHskips _ H3. by apply. have h0 := bisim_hd H3.
+  have := IHskips _ H4. by apply. have h0 := bisim_hd H4.
   rewrite -h0. done. 
 Qed. 
 
@@ -118,15 +119,16 @@ Definition u0: assertS := fun st => st x = 0.
 
 Lemma Sn_1: forall n, S n - 1 = n. 
 Proof. 
-move => n. by omega.
+move => n. by lia.
 Qed.  
 
 Lemma Sn: forall n, n + 1 = S n. 
 Proof. 
-move => n. by omega.
+move => n. by lia.
 Qed. 
 
 (* Proposition 5.3 *)
+(*
 Lemma spec: semax u0 s (Up 0).
 Proof. 
 rewrite /s. 
@@ -252,3 +254,4 @@ have h0: (<<u0>> *** Iter ((Skips *** Updt ttS x (fun st => st x + 1))
      move => h3. have := h3 _ _ _ h0 h1 h2. by apply. 
   have := semax_conseq_R h0 h1. by apply. 
 Qed.
+*)
