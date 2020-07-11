@@ -11,7 +11,6 @@ theories/Trace.v
 theories/Assert.v
 theories/Semax.v
 theories/Weakbism.v
-theories/Hoare.v
-theories/HoareTotal.v
+theories/Semax_sound.v
+theories/Semax_complete.v
 theories/Liveness.v
-theories/Markov.v

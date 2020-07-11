@@ -23,7 +23,7 @@ Axiom update_x_a0: forall st, (st x) + 1 = update x (a0 st) st x.
 Inductive n_at_x n: assertS :=
 | n_at_x_intro: forall st, (st x) = n -> n_at_x n st.  
 
-Inductive n_at_x_eventually (n: nat): trace -> Type :=
+Inductive n_at_x_eventually (n: nat): trace -> Prop :=
 | n_at_x_nil: forall st, st x = n -> n_at_x_eventually n (Tnil st)
 | n_at_x_cons: forall st tr, st x = n -> n_at_x_eventually n (Tcons st tr)
 | n_at_x_delay: forall st tr, 
@@ -83,31 +83,31 @@ have h0:((<< n_at_x 0 >>) ***
 Iter (Updt ttS x a0 *** (<< ttS >>)) *** ([|eval_false tt|])) =>>
 (Eventually n).
 * clear h1. move => tr0 h0. move: h0 => [tr1 [h0 h1]]. move: h0 => [st0 [h0 h2]]. 
-  foo h2. foo H1. foo h1. foo X. simpl.  
+  foo h2. foo H1. foo h1. foo H2. simpl.  
   have h1: forall n tr,           
   append (iter (append (updt ttS x a0) (dup ttS)))
        (singleton (eval_false tt)) tr ->
   n_at_x_eventually (hd tr x + n) tr.
-  * clear X0 h0 n tr'. move => n. induction n. 
+  * clear H1 h0 n tr'. move => n. induction n. 
     - case. move => st0 _. apply n_at_x_nil. simpl. by omega. 
       move => st0 tr0 _. apply n_at_x_cons. simpl. by omega.
     - move => tr0 h0. move: h0 => [tr1 [h0 h1]]. foo h0.
-      foo h1. move: X => [st0 [h0 _]]. rewrite /eval_false in h0.
-      rewrite tt_true in h0. foo h0. move: X => [tr2 [h0 h2]]. 
-      move: h0 => [st0 [_ h0]]. foo h0. foo H1. foo h2. 
-      foo X. foo X0. move: X1 => [st1 [_ h2]]. foo h2. simpl in H0. 
-      foo H2. foo h1. foo X. foo X1. foo X0. simpl. apply n_at_x_delay.
-      have h0 := follows_singleton X1.   
+      foo h1. move: H1 => [st0 [h0 _]]. rewrite /eval_false in h0.
+      rewrite tt_true in h0. foo h0. move: H => [tr2 [h0 h2]]. 
+      move: h0 => [st0 [_ h0]]. foo h0. foo H2. foo h2. 
+      foo H0. foo H3. move: H1 => [st1 [_ h2]]. foo h2. simpl in H0. 
+      foo H2. foo h1. foo H4. foo H3. foo H2. simpl. apply n_at_x_delay.
+      have h0 := follows_singleton H5.
       have h1: append (iter (append (updt ttS x a0) (dup ttS)))
       (singleton (eval_false tt)) tr'1. exists tr'1. 
       split; first done. 
-      have := follows_setoid_R (@singleton_setoid _) X1 (bisim_symmetric h0).
-      by apply. have h2 := IHn _ h1 => {h1 X1 X}.
+      have := follows_setoid_R (@singleton_setoid _) H5 (bisim_symmetric h0).
+      by apply. have h2 := IHn _ h1 => {h1 H5}.
       have h1: st0 x + S n = hd tr'1 x + n. 
       rewrite H0. rewrite -(update_x_a0 st0). omega. 
       rewrite h1 => {h1}. apply n_at_x_delay. 
       have := n_at_x_eventually_setoid h2 h0. by apply. 
-  apply n_at_x_delay. have h2 := h1 _ _ X0 => {h1 X0}. 
+  apply n_at_x_delay. have h2 := h1 _ _ H1 => {h1 H1}. 
   foo h0. have h0: n = hd tr' x + n; first omega. rewrite h0 => {h0}.
   by apply h2. 
 have := semax_conseq_R h0 h1. by apply. 
