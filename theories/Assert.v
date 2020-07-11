@@ -387,6 +387,26 @@ Proof. move => p q. cofix hcoind. case.
 Qed.
 
 (*
+Section Hej.
+Variable (p0 p1: trace -> Prop)  (tr0 tr1: trace) (h: follows (append p0 p1) tr0 tr1).
+
+Lemma bla : True.
+Proof.
+inversion h.
+- case H0; intros. apply I.
+- subst.
+  Print follows_delay.
+  inversion h; subst.
+  
+
+CoInductive midp (p0 p1: trace -> Prop)  (tr0 tr1: trace) (h: follows (append p0 p1) tr0 tr1) : trace -> Prop :=
+| midp_follows_nil : forall tr, p0 tr -> follows p1 tr tr1 -> midp h tr
+| midp_follows_delay : @midp p0 p1  -> midp h (Tcons st)
+
+                             follows (append p0 p1) tr tr'
+*)
+
+(*
 CoFixpoint midp (p0 p1: trace -> Type)  (tr0 tr1: trace) (h: follows (append p0 p1) tr0 tr1): trace :=
 match h with
 | follows_nil _ _ _ h1 => let: existT tr2 h2 := h1 in tr2
