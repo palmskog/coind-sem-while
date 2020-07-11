@@ -204,3 +204,28 @@ cofix COINDHYP. move => s tr1 tr2 tr3 h1 h2. foo h2; foo h1.
 - by apply: (execseq_nil H).
 - apply: execseq_cons. by apply: (COINDHYP _ _ _ _ H3 H). 
 Qed.
+
+Lemma exec_hd: forall s st tr,
+exec s st tr -> hd tr = st.   
+Proof.
+move => s; induction s. 
+- move => st tr h1. foo h1. by simpl. 
+- move => st tr h1. foo h1. by simpl. 
+- move => st tr h1. foo h1. have h1 := IHs1 _ _ H1. foo H4. 
+  - simpl. have := IHs2 _ _ H; apply. 
+  - by simpl. 
+- move => st tr h1. foo h1. 
+  - foo H5. by simpl. 
+  - foo H5. by simpl. 
+- move => st tr h1. foo h1. 
+  - by simpl. 
+  - foo H2. foo H6. foo H5. by simpl. 
+Qed.
+
+Lemma execseq_hd: forall s tr tr',
+execseq s tr tr' -> hd tr' = hd tr.
+Proof. 
+move => s tr tr' h1. foo h1. 
+- simpl. have := exec_hd H; apply. 
+- by simpl. 
+Qed.

@@ -181,3 +181,15 @@ Proof.
 move => s st tr h1. have h2 := Exec_correct_exec s st. 
 by have := exec_deterministic h1 h2; apply.
 Qed.  
+
+Lemma Exec_hd : forall s st, hd (Exec s st) = st.
+Proof.
+elim => //=.
+move => s1 IHs1 s2 IHs2 st.
+case H: (Exec s1 st) => [st'|].
+- apply Exec_nil in H.
+  rewrite -H.
+  by apply IHs2.
+- have IHs1H := IHs1 st.
+  by rewrite H in IHs1H.
+Qed.
