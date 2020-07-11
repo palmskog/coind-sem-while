@@ -442,19 +442,6 @@ cofix COINDHYP. dependent inversion h. move => {tr H0}.
  by have := COINDHYP _ _ _ _ h1; apply. 
 Qed.
 
-(*
-Lemma append_assoc_R: forall p1 p2 p3,
-forall tr, (append p1 (append p2 p3)) tr ->  (append (append p1 p2)  p3) tr.
-Proof. 
-move => p1 p2 p3 tr0 h1.  move: h1 => [tr1 [h1 h2]].
-exists (midp h2). split. 
-- exists tr1. split.
-  * done.  
-  * have := midp_before h2. by apply.
-- have := midp_after h2. by apply. 
-Qed. 
-*)
-
 Lemma append_assoc_L: forall p1 p2 p3 tr,
 (append (append p1 p2) p3) tr -> append p1 (append p2  p3) tr.
 Proof. 
@@ -475,17 +462,6 @@ split. apply h2.  have := follows_setoid_R h1 h3 h4. apply.
 Defined. 
 
 Infix "***" := Append (at level 60, right associativity).
-
-
-(* Lemma 3.4 (4) <= *)
-(*
-Lemma Append_assoc_R: forall p1 p2 p3,
-(p1 *** p2 *** p3) =>> (p1 *** p2) *** p3.
-Proof. 
-move => p1 p2 p3 tr0 h1. destruct p1 as [f1 hf1]. destruct p2 as [f2 hf2]. 
-destruct p3 as [f3 hf3]. simpl. simpl in h1. apply append_assoc_R. by apply h1. 
-Qed. 
-*)
 
 (* Lemma 3.4 (4) => *)
 Lemma Append_assoc_L: forall p1 p2 p3,

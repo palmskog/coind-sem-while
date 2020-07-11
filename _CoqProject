@@ -9,6 +9,7 @@ theories/SmallFunct.v
 theories/SmallRel.v
 theories/Trace.v
 theories/Assert.v
+theories/AssertClassical.v
 theories/Semax.v
 theories/Weakbism.v
 theories/Semax_sound.v
