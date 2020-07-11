@@ -3,7 +3,7 @@ Require Import Trace.
 Require Import Language. 
 Require Import BigRel. 
 Require Import JMeq.
-From Coinduction Require Import Coinduction.
+From Coinduction Require Import Coinduction Tactics.
 From Hammer Require Import Tactics.
 
 Set Implicit Arguments.
@@ -46,6 +46,27 @@ CoInductive redm: stmt -> state -> trace -> Prop :=
   step s st s' st' ->
   redm s' st' tr ->
   redm s st (Tcons st tr).
+
+Section redm_coind.
+Variable R : stmt -> state -> trace -> Prop.
+
+Hypothesis redm_stop_case : forall s st st', R s st (Tnil st') -> st = st' /\ stop s.
+Hypothesis redm_step_case : forall s st st' tr, R s st (Tcons st' tr) ->
+ st = st' /\ exists s' st', step s st s' st' /\ R s' st' tr.
+
+Theorem redm_coind : forall s st tr, R s st tr -> redm s st tr.
+Proof.
+cofix f; intros; destruct tr.
+- apply redm_stop_case in H.
+  case: H =>-> => H.
+  by apply redm_stop.
+- apply redm_step_case in H.
+  case: H =><- {s0}. case => s'; case => st' [hs hr].  
+  apply: redm_step.
+  * by apply: hs.
+  * by apply: f.
+Qed.
+End redm_coind.
 
 Lemma stop_step_exclusive: forall s st s' st',
 stop s -> step s st s' st' -> False.
@@ -94,13 +115,35 @@ move => st s tr1 tr2  h1 h2. foo h1.
   - by have := stop_step_exclusive H1 H.  
   - have h3 := step_deterministic H H1. foo h3. apply bisim_cons.  
     by have := COINDHYP _ _ _ _ H0 H2; apply. 
-Qed.   
+Qed.
 
 (* setoid *)
 Lemma redm_insensitive: 
-forall st s tr1 tr2, redm st s tr1 -> bisim tr1 tr2 ->
-redm st s tr2. 
-Proof. 
+forall s st tr1 tr2, redm s st tr1 -> bisim tr1 tr2 ->
+redm s st tr2. 
+Proof.
+move => s st tr1 tr2 hr hb.
+apply (@redm_coind (fun s st tr2 => exists tr1, redm s st tr1 /\ bisim tr1 tr2)).
+- move {hr hb s st tr1 tr2}.
+  move => s st st'; case => tr1; case => [hr hb].
+  foo hb.
+  by foo hr.
+- move {hr hb s st tr1 tr2}.
+  move => s st st' tr2.
+  case => tr1 [hr hb].
+  foo hb.
+  foo hr.
+  split => //.
+  exists s'; exists st'0.
+  split => //.
+  by exists tr.
+- by exists tr1.
+Qed.
+
+Lemma redm_insensitive': 
+forall s st tr1 tr2, redm s st tr1 -> bisim tr1 tr2 ->
+redm s st tr2. 
+Proof.
 cofix COINDHYP. move => st s tr1 tr2 h1 h2. foo h1.  
 - foo h2. apply: (redm_stop _ H).
 - foo h2. apply: (redm_step H).  apply: (COINDHYP _ _ _  _ H0 H4). 
@@ -215,9 +258,11 @@ dependent inversion h; subst; move => s2 s3.
     have h6 := JMeq_eq h5. rewrite -h6.
     have h2j: JMeq h2 h2 by apply JMeq_refl.
     have hs1: (s1';; s5) = (s1';; s5) by [].
-    case (CH _ _ _ _ _ _ hs1 _ h2j) => tr' hm.
-    exists (Tcons__g st tr').
-    by econstructor; eauto.
+    have [tr' hm] := CH _ _ _ _ _ _ hs1 _ h2j.
+    eexists.
+    econstructor 3.
+    - by apply s3.
+    - by apply hm.
   * move => s5 s6 tr0 h1 h2 h3 h4 h5.
     foo h3.
     have h6 := JMeq_eq h5. rewrite -h6.
