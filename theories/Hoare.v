@@ -72,8 +72,6 @@ Inductive loopinv (a: expr) (p:assertT) (u:assertS) : assertS :=
   loopinv a p u st'.   
 *) 
  
-
-
 Lemma Last_destruct: forall (p: assertT) st tr,
 satisfy p tr -> fin tr st -> Last p st.
 Proof. 

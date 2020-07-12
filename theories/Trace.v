@@ -11,7 +11,9 @@ Definition id := Z.
 Definition val := nat.
 Definition state := id -> val. 
 
-CoInductive trace: Set := | Tnil (_: state) | Tcons (_: state) (_: trace) .
+CoInductive trace : Set :=
+| Tnil (_: state)
+| Tcons (_: state) (_: trace).
 
 Definition trace_decompose (tr: trace): trace :=
 match tr with

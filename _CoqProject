@@ -1,5 +1,7 @@
 -R theories CoindHoareWhile
 
+-arg -w -arg -local-declaration
+
 theories/SsrExport.v
 theories/Alternatives.v
 theories/BigFunct.v

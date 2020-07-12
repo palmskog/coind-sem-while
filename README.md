@@ -39,6 +39,7 @@ make   # or make -j <number-of-cores-on-your-machine>
 - `Assert.v`: the assertion language and properties of the assertions
 - `Hoare.v`: the partial-correctness Hoare logic, embedding and projection
 - `HoareTotal.v`: the total-correctness Hoare logic, embedding and projection
+- `Semax.v`: the trace-based Hoare logic
 - `Markov.v`: corresponds to Section 5.1
 - `Liveness.v`: corresponds to Section 5.2
 - `Weakbism.v`: corresponds to Section 5.3

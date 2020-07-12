@@ -1,4 +1,5 @@
 (coq.theory
  (name CoindHoareWhile)
  (package coq-coind-hoare-while)
- (synopsis "Hoare logic in Coq for coinductive trace-based operational semantics of While"))
+ (synopsis "Hoare logic in Coq for coinductive trace-based operational semantics of While")
+ (flags -w -local-declaration))
