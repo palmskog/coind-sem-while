@@ -14,7 +14,7 @@ synopsis: >-
 
 description: |-
   A Hoare logic in Coq for coinductive trace-based operational semantics for the
-  While language
+  While language, using predicative definitions of relations.
 
 publications:
 - pub_url: https://arxiv.org/abs/1412.6579

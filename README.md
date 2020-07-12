@@ -12,7 +12,7 @@
 [doi-link]: https://doi.org/10.2168/LMCS-11(1:1)2015
 
 A Hoare logic in Coq for coinductive trace-based operational semantics for the
-While language
+While language, using predicative definitions of relations.
 
 ## Meta
 

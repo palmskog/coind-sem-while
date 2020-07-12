@@ -10,7 +10,7 @@ license: "Unknown"
 synopsis: "Hoare logic in Coq for coinductive trace-based operational semantics of While"
 description: """
 A Hoare logic in Coq for coinductive trace-based operational semantics for the
-While language"""
+While language, using predicative definitions of relations."""
 
 build: ["dune" "build" "-p" name "-j" jobs]
 depends: [
