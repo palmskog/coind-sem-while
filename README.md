@@ -22,7 +22,7 @@ program runs through coinductive traces.
 - Coq namespace: `CoindSemWhile`
 - Related publication(s):
   - [A Hoare logic for the coinductive trace-based big-step semantics of While](https://arxiv.org/abs/1412.6579) doi:[10.2168/LMCS-11(1:1)2015](https://doi.org/10.2168/LMCS-11(1:1)2015)
-  - [Trace-Based Coinductive Operational Semantics for While](https://link.springer.com/chapter/10.1007/978-3-642-03359-9_26) doi:[10.1007/978-3-642-03359-9_26](https://doi.org/10.1007/978-3-642-03359-9_26)
+  - [Trace-Based Coinductive Operational Semantics for While](http://www.cs.ioc.ee/~tarmo/papers/tphols09.pdf) doi:[10.1007/978-3-642-03359-9_26](https://doi.org/10.1007/978-3-642-03359-9_26)
 
 ## Building instructions
 
@@ -40,9 +40,7 @@ make   # or make -j <number-of-cores-on-your-machine>
 - `BigRel.v` defines the big-step relational semantics
   and proves that it is deterministic and a setoid predicate.
 - `SmallRel.v` defines the small-step relational semantics
-  and proves that it is deterministic and a setoid predicate
-  and that the big-step relational and small-step relational
-  semantics are equivalent.
+  and proves that it is deterministic and a setoid predicate.
 - `BigFunct.v` defines the big-step functional semantics and
   proves that the big-step relational and the big-step functional
   semantics are equivalent.

@@ -20,7 +20,7 @@ publications:
 - pub_url: https://arxiv.org/abs/1412.6579
   pub_title: A Hoare logic for the coinductive trace-based big-step semantics of While
   pub_doi: 10.2168/LMCS-11(1:1)2015
-- pub_url: https://link.springer.com/chapter/10.1007/978-3-642-03359-9_26
+- pub_url: http://www.cs.ioc.ee/~tarmo/papers/tphols09.pdf
   pub_title: Trace-Based Coinductive Operational Semantics for While
   pub_doi: 10.1007/978-3-642-03359-9_26
 
@@ -76,9 +76,7 @@ documentation: |-
   - `BigRel.v` defines the big-step relational semantics
     and proves that it is deterministic and a setoid predicate.
   - `SmallRel.v` defines the small-step relational semantics
-    and proves that it is deterministic and a setoid predicate
-    and that the big-step relational and small-step relational
-    semantics are equivalent.
+    and proves that it is deterministic and a setoid predicate.
   - `BigFunct.v` defines the big-step functional semantics and
     proves that the big-step relational and the big-step functional
     semantics are equivalent.
