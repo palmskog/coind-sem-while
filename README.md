@@ -40,11 +40,11 @@ make   # or make -j <number-of-cores-on-your-machine>
 - `Language.v` defines the While language.
 - `BigRel.v` defines the big-step relational semantics
   and proves that it is deterministic and a setoid predicate.
-- `SmallRel.v` defines the small-step relational semantics
-  and proves that it is deterministic and a setoid predicate.
 - `BigFunct.v` defines the big-step functional semantics and
   proves that the big-step relational and the big-step functional
   semantics are equivalent.
+- `SmallRel.v` defines the small-step relational semantics
+  and proves that it is deterministic and a setoid predicate.
 - `SmallFunct.v` defines the small-step functional semantics
   and proves that the small-step relational and the small-step
   functional semantics are equivalent and that the small-step
@@ -54,6 +54,9 @@ make   # or make -j <number-of-cores-on-your-machine>
 - `Assert.v` defines the assertion language and properties of the assertions.
 - `Hoare.v` defines the partial-correctness Hoare logic, embedding and projection.
 - `HoareTotal.v` defines the total-correctness Hoare logic, embedding and projection.
+- `Semax.v` defines the trace-based Hoare logic.
+- `SemaxSound.v` defines and proves soundness for the trace-based Hoare logic.
+- `SemaxComplete.v` defines and proves completeness for the trace-based Hoare logic.
 - `Markov.v` defines an example inspired by Markov's principle.
 - `Liveness.v` defines an example that demonstrates reasoning about liveness.
 - `Weakbism.v` defines an example based on weak trace equivalence.

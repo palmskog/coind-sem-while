@@ -2,7 +2,7 @@ Require Import SsrExport.
 Require Import Trace.
 Require Import Language. 
 Require Import Semax.
-Require Import Semax_sound.
+Require Import SemaxSound.
 Require Import Assert.
 Require Import AssertClassical.
 Require Import BigFunct.
@@ -120,7 +120,7 @@ Proof. move => p n m hnm st0 h0 tr0 [h1 h2].
 have : len n tr0. apply h0 => //. clear h0 h1 h2. move => h0.
 have := len_monotone hnm h0. done. Qed.
 
-(* Same as semax_total from Semax_sound.v. *)
+(* Same as semax_total from SemaxSound.v. *)
 Lemma semax_post: forall u s p, semax u s p -> forall st, u st -> exists tr : trace, (hd tr = st) /\ (satisfy p tr).
 Proof.
 move => U S P hsemax s hU.

@@ -3,19 +3,19 @@
 -arg -w -arg -local-declaration
 
 theories/SsrExport.v
-theories/Alternatives.v
-theories/BigFunct.v
-theories/BigRel.v
-theories/Language.v
-theories/SmallFunct.v
-theories/SmallRel.v
 theories/Trace.v
+theories/Language.v
+theories/BigRel.v
+theories/BigFunct.v
+theories/SmallRel.v
+theories/SmallFunct.v
+theories/Alternatives.v
 theories/Assert.v
 theories/AssertClassical.v
-theories/Semax.v
-theories/Weakbism.v
-theories/Semax_sound.v
-theories/Semax_complete.v
-theories/Liveness.v
 theories/Hoare.v
+theories/Semax.v
+theories/SemaxSound.v
+theories/SemaxComplete.v
+theories/Weakbism.v
+theories/Liveness.v
 theories/Markov.v
