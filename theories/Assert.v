@@ -25,7 +25,7 @@ Infix "andS" := assertS_and (at level 60, right associativity).
 Definition assertT_and0 (p1 p2: assertT) :=
 let: exist f0 h0 := p1 in
 let: exist f1 h1 := p2 in
-fun tr => f0 tr /\ f1 tr.  
+fun tr => f0 tr /\ f1 tr.
 
 Lemma assertT_and0_setoid: forall p0 p1, setoid (assertT_and0 p0 p1). 
 move => [f0 h0] [f1 h1]. simpl.  
@@ -41,7 +41,7 @@ destruct p2 as [f1 h1]. exists (fun tr => f0 tr /\ f1 tr).
 move => tr0 [h2 h3] tr1 h4. split. 
 * have := h0 _ h2 _ h4; apply. 
 * have := h1 _ h3 _ h4; apply.
-Qed.
+Defined.
 
 Infix "andT" := assertT_and (at level 60, right associativity).
 
