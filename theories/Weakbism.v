@@ -222,7 +222,7 @@ have h0: (<<u0>> *** Iter ((Skips *** Updt ttS x (fun st => st x + 1))
             split. split. split. simpl. apply red_tau. by simpl. apply red_stop. 
             simpl. rewrite /update. 
             have h: Zeq_bool x x = true; first by rewrite -Zeq_is_eq_bool.
-            rewrite h => {h}. lia. rewrite H0. 
+            rewrite h => {h}. have ->: st0 x + 1 = S (st0 x) by lia. by auto with arith. rewrite H0.
             apply bisim_cons. have := bisim_symmetric h1. by apply.
             simpl. rewrite H0. rewrite /update. have h: Zeq_bool x x = true;
             first by rewrite -Zeq_is_eq_bool. rewrite h => {h}.  by apply Sn.

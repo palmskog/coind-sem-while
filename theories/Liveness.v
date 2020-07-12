@@ -109,7 +109,7 @@ Iter (Updt ttS x a0 *** (<< ttS >>)) *** ([|eval_false tt|])) =>>
       rewrite h1 => {h1}. apply n_at_x_delay. 
       have := n_at_x_eventually_setoid h2 h0. by apply. 
   apply n_at_x_delay. have h2 := h1 _ _ X0 => {h1 X0}. 
-  foo h0. have h0: n = hd tr' x + n; first lia. rewrite h0 => {h0}.
+  foo h0. have h0: n = hd tr' x + n by rewrite H; lia. rewrite h0 => {h0}.
   by apply h2. 
 have := semax_conseq_R h0 h1. by apply. 
 have := semax_seq hs0 hs1 => {hs0 hs1}. move => hs. 
