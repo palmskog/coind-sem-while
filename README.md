@@ -2,8 +2,8 @@
 
 [![CI][action-shield]][action-link]
 
-[action-shield]: https://github.com/palmskog/coind-opsem-while/workflows/CI/badge.svg?branch=master
-[action-link]: https://github.com/palmskog/coind-opsem-while/actions?query=workflow%3ACI
+[action-shield]: https://github.com/palmskog/coind-sem-while/workflows/CI/badge.svg?branch=master
+[action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow%3ACI
 
 
 
@@ -25,8 +25,9 @@ for both terminating and non-terminating program runs through coinductive traces
 ## Building instructions
 
 ``` shell
-git clone https://github.com/palmskog/coind-opsem-while
-cd coind-opsem-while
+git clone https://github.com/palmskog/coind-sem-while
+cd coind-sem-while
+git checkout majas
 make   # or make -j <number-of-cores-on-your-machine>
 ```
 

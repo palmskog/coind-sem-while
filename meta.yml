@@ -1,6 +1,7 @@
 ---
 fullname: Trace-Based Coinductive Operational Semantics for While
-shortname: coind-opsem-while
+shortname: coind-sem-while
+opam_name: coq-coind-opsem-while
 organization: palmskog
 community: false
 action: true
@@ -57,8 +58,9 @@ build: |-
  ## Building instructions
 
  ``` shell
- git clone https://github.com/palmskog/coind-opsem-while
- cd coind-opsem-while
+ git clone https://github.com/palmskog/coind-sem-while
+ cd coind-sem-while
+ git checkout majas
  make   # or make -j <number-of-cores-on-your-machine>
  ```
 
