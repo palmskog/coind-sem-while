@@ -1,12 +1,15 @@
 # Hoare Logic for Coinductive Trace-Based Semantics of While
 
 [![CI][action-shield]][action-link]
+[![DOI][doi-shield]][doi-link]
 
 [action-shield]: https://github.com/palmskog/coind-sem-while/workflows/CI/badge.svg?branch=master
 [action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow%3ACI
 
 
 
+[doi-shield]: https://zenodo.org/badge/DOI/10.2168/LMCS-11(1:1)2015.svg
+[doi-link]: https://doi.org/10.2168/LMCS-11(1:1)2015
 
 A Hoare logic for coinductive trace-based operational semantics for the
 While language, proven sound and complete in Coq.
