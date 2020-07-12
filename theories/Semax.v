@@ -1,5 +1,4 @@
 Require Import SsrExport.
-Require Import Setoid. 
 Require Import Trace.
 Require Import Language.
 Require Import Assert.
