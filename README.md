@@ -37,7 +37,7 @@ make   # or make -j <number-of-cores-on-your-machine>
 - `Trace.v` defines traces and bisimilarity. It proves
   bisimilarity is reflexive, symmetric and transitive.
 - `Language.v` defines the While language.
-- BigRel.v defines the big-step relational semantics
+- `BigRel.v` defines the big-step relational semantics
   and proves that it is deterministic and a setoid predicate.
 - `SmallRel.v` defines the small-step relational semantics
   and proves that it is deterministic and a setoid predicate
