@@ -7,6 +7,7 @@ Require Import Assert.
 Require Import AssertClassical.
 Require Import BigFunct.
 Require Import Coq.Program.Equality.
+Require Import Lia.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -100,12 +101,12 @@ Lemma len_monotone: forall n m, n <= m ->
 forall tr, len n tr -> len m tr.
 Proof. have: forall n m tr, len m tr -> len (n + m) tr.
 move => n. induction n. 
-- move => m tr. rewrite (_: 0 + m = m). done.  by omega.
+- move => m tr. rewrite (_: 0 + m = m). done.  by lia.
 - move => m tr h0. have := IHn _ _ h0 => {IHn h0}. move => h0. 
-  rewrite (_: S n + m = S (n + m)); last by omega.
+  rewrite (_: S n + m = S (n + m)); last by lia.
   have := len_S h0. done. 
 move => h. move => n m h0 tr h1. 
-rewrite (_: m = (m - n) + n); last by omega. 
+rewrite (_: m = (m - n) + n); last by lia. 
 have := h _ _ _ h1. apply. Qed.         
 
 Definition Len (p: assertT) (n: nat) : assertS := fun st =>
@@ -477,16 +478,16 @@ Proof. induction 1.
       exists (Tcons (hd tr0) (Tnil (hd tr0))). split. exists (hd tr0). 
       split => //. rewrite h2. done. apply bisim_reflexive. apply follows_delay. 
       apply follows_nil => //. 
-      move => h4. foo h4. rewrite (_: S n0 - 1 = n0); last by omega. done. 
+      move => h4. foo h4. rewrite (_: S n0 - 1 = n0); last by lia. done. 
      clear h0. move => h0. 
     fold J0 in h0. fold J1 in h0. exists (n-1). destruct h0 as [h0 h1]. 
-    split => //. omega.   
+    split => //. lia.   
 
    (* end of hpost *)
    
   case. 
   * have := tsemax2_conseq_L hn0 => {hn0}. apply. apply tsemax2_false. 
-  * move => n. have hn : (S n) > 0; first by omega.
+  * move => n. have hn : (S n) > 0; first by lia.
     have := tsemax2_conseq (hpre _) (hpost _ hn) => {hpre hpost hn hn0}. apply.
     have hpre : (eval_true a andS u andS J0 andS Len (p *** [|u|] *** Q) (S n)) 
     ->> (eval_true a andS u andS J0 andS (Len ([|J0|] *** p *** [|u|] *** Q) (S n))).
@@ -985,7 +986,7 @@ induction 1.
     tr0 -> finite tr0. clear tr0 tr X0 tr1 h1 n X. 
     move => m. induction m.
     - move => n tr0 tr1 tr2 h h1 h2 h3.
-      have h4: n = 0; first by omega. rewrite h4 in h1 => {h4 h}.  
+      have h4: n = 0; first by lia. rewrite h4 in h1 => {h4 h}.  
       move: h1 => [tr3 [h1 h4]].
       move: tr3 h1 tr0 tr1 tr2 h2 h3 h4. induction 1.
       - move => tr0 tr1 tr2 h0 h1 h2. foo h2. move: X => [st0 [h3 h4]].
@@ -1002,11 +1003,11 @@ induction 1.
         move: h2 => [st0 [h2 h5]]. foo h5. foo h4.
         have h2 := follows_hd X1. rewrite -h2 in h0 => {h2}. 
         have h2 := follows_hd h3. rewrite -h2 in h0 => {h2}. 
-        have h2: t (hd tr0) <= m; first by omega. clear h0. 
+        have h2: t (hd tr0) <= m; first by lia. clear h0. 
         have := IHm _ _ _ _ h2 X h3 X1. by apply. 
     - clear IHm. move => tr0 tr1 tr2 h3 h1 h2. foo h3. foo h1. foo h2. 
       apply finite_delay. have := IHh0 _ _ _ X X0 X1. by apply. 
-    have := h n _ _ _ _ _ X h1 X0. apply. omega. 
+    have := h n _ _ _ _ _ X h1 X0. apply. lia. 
   have := semax_conseq_R h1 h0. by apply.  
 - clear X. move => u0. 
   have h0 := IHX u0 => {IHX}. 

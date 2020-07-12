@@ -3,6 +3,7 @@ Require Import Trace.
 Require Import Language. 
 Require Import Assert. 
 Require Import Semax.
+Require Import Lia.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -91,7 +92,7 @@ Axiom cond_false: forall st, eval_false cond st -> (B (st x)).
 Lemma plus_S: forall n,
 n + 1 = S n. 
 Proof. 
-move => n; by omega. 
+move => n; by lia. 
 Qed. 
 
 (* Proposition 5.1 *)

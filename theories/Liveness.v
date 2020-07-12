@@ -3,6 +3,7 @@ Require Import Trace.
 Require Import Language. 
 Require Import Assert. 
 Require Import Semax.
+Require Import Lia.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -89,8 +90,8 @@ Iter (Updt ttS x a0 *** (<< ttS >>)) *** ([|eval_false tt|])) =>>
        (singleton (eval_false tt)) tr ->
   n_at_x_eventually (hd tr x + n) tr.
   * clear H1 h0 n tr'. move => n. induction n. 
-    - case. move => st0 _. apply n_at_x_nil. simpl. by omega. 
-      move => st0 tr0 _. apply n_at_x_cons. simpl. by omega.
+    - case. move => st0 _. apply n_at_x_nil. simpl. by lia. 
+      move => st0 tr0 _. apply n_at_x_cons. simpl. by lia.
     - move => tr0 h0. move: h0 => [tr1 [h0 h1]]. foo h0.
       foo h1. move: H1 => [st0 [h0 _]]. rewrite /eval_false in h0.
       rewrite tt_true in h0. foo h0. move: H => [tr2 [h0 h2]]. 
@@ -104,11 +105,11 @@ Iter (Updt ttS x a0 *** (<< ttS >>)) *** ([|eval_false tt|])) =>>
       have := follows_setoid_R (@singleton_setoid _) H5 (bisim_symmetric h0).
       by apply. have h2 := IHn _ h1 => {h1 H5}.
       have h1: st0 x + S n = hd tr'1 x + n. 
-      rewrite H0. rewrite -(update_x_a0 st0). omega. 
+      rewrite H0. rewrite -(update_x_a0 st0). lia. 
       rewrite h1 => {h1}. apply n_at_x_delay. 
       have := n_at_x_eventually_setoid h2 h0. by apply. 
   apply n_at_x_delay. have h2 := h1 _ _ H1 => {h1 H1}. 
-  foo h0. have h0: n = hd tr' x + n; first omega. rewrite h0 => {h0}.
+  foo h0. have h0: n = hd tr' x + n; first lia. rewrite h0 => {h0}.
   by apply h2. 
 have := semax_conseq_R h0 h1. by apply. 
 have := semax_seq hs0 hs1 => {hs0 hs1}. move => hs. 
