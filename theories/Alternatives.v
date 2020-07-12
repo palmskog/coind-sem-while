@@ -12,7 +12,7 @@ Section Exec.
 Variable tt: expr.
 Hypothesis tt_spec: forall st, is_true (tt st) = true.
 
-CoInductive exec1: stmt -> state -> trace -> Set :=
+CoInductive exec1: stmt -> state -> trace -> Prop :=
 | exec1_skip: forall st, 
     exec1 Sskip st (Tnil st)
 | exec1_assign: forall id a st, 
@@ -38,7 +38,7 @@ CoInductive exec1: stmt -> state -> trace -> Set :=
     execseq1 (Swhile a s) tr tr' ->
     exec1 (Swhile a s) st tr'
 
-with execseq1: stmt -> trace -> trace -> Set :=
+with execseq1: stmt -> trace -> trace -> Prop :=
 | exec1_nil: forall st s tr,
   exec1 s st tr ->
   execseq1 s (Tnil st) tr
@@ -83,7 +83,7 @@ match tr with
 end.  
 
 
-CoInductive execseq2: stmt -> trace -> trace -> Set :=
+CoInductive execseq2: stmt -> trace -> trace -> Prop :=
 | execseq2_skip: forall tr, 
     execseq2 Sskip tr tr
 | execseq2_assign: forall id a tr, 
@@ -141,7 +141,7 @@ Qed.
 
 End Exec.
 
-CoInductive split: trace -> trace -> state -> trace -> Set :=
+CoInductive split: trace -> trace -> state -> trace -> Prop :=
 | split_nil: forall st, 
   split (Tnil st) (Tnil st) st (Tnil st)
 | split_cons: forall st tr,
@@ -150,7 +150,7 @@ CoInductive split: trace -> trace -> state -> trace -> Set :=
   split tr tr' st' tr'' -> 
   split (Tcons st tr) (Tcons st tr') st' tr''.
 
-CoInductive exec3: stmt -> state -> trace -> Set :=
+CoInductive exec3: stmt -> state -> trace -> Prop :=
 | exec3_skip: forall st, 
   exec3 Sskip st (Tnil st)
 | exec3_assign: forall id a st, 
