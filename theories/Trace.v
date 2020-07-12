@@ -1,5 +1,4 @@
 Require Import SsrExport.
-Require Export ZArith.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -7,11 +6,13 @@ Import Prenex Implicits.
 
 Ltac foo h := inversion h; subst => {h}.
 
-Definition id := Z.
+Definition id := nat.
 Definition val := nat.
 Definition state := id -> val. 
 
-CoInductive trace: Set := | Tnil (_: state) | Tcons (_: state) (_: trace) .
+CoInductive trace : Set :=
+| Tnil (_: state)
+| Tcons (_: state) (_: trace).
 
 Definition trace_decompose (tr: trace): trace :=
 match tr with

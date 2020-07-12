@@ -1,4 +1,5 @@
 Require Import Trace.
+Require Export Arith.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -15,7 +16,7 @@ Inductive stmt : Set :=
 | Swhile (_: expr) (_ :stmt).
 
 Definition update (x: id) (v: val) (st:state): state :=
-  fun y => if Zeq_bool x y then v else st y.
+  fun y => if x =? y then v else st y.
 
 Notation "x <- e" := (Sassign x e) (at level 80).
 Notation "s1 ';;' s2" :=

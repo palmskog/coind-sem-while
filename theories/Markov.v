@@ -98,8 +98,8 @@ have hs0: semax ttS (x <- (fun _ => 0))
   foo h0. destruct H as [_ h0]. foo h0. foo H1.
   apply follows_delay. apply follows_nil => //. 
   exists (update x 0 x0). split => //. rewrite /update.
-  have h: Zeq_bool x x = true. by rewrite -Zeq_is_eq_bool.
-  by rewrite h. by apply bisim_reflexive.     
+  have h: x =? x = true by apply Nat.eqb_refl.
+  by rewrite h. by apply bisim_reflexive.
 have hs1: semax (fun st => st x = 0)  (Swhile cond (x <- (fun st => (st x) + 1))) 
 ((ttT *** [|fun st => B (st x)|]) andT negT Infinite).
 set u0 := fun st => st x = 0. 
@@ -136,8 +136,8 @@ have h0: ((<< u0 >>) ***
       * rewrite -H0. symmetry. by have := follows_hd H5; apply.  
       have h2: hd tr'1 x = S (st0 x).
       * rewrite h1. rewrite /update.
-        have h2: Zeq_bool x x = true. rewrite -Zeq_is_eq_bool.
-        done. rewrite h2 => {h2}. rewrite /a0. by apply plus_S.
+        have h2: x =? x = true by apply Nat.eqb_refl.
+        rewrite h2 => {h2}. rewrite /a0. by apply plus_S.
       have h3: (append (iter (append (updt u1 x a0) (dup ttS)))
       (singleton (eval_false cond))) tr'1.
       * exists tr'0. by split.       

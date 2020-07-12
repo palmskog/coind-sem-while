@@ -67,7 +67,7 @@ have hs0: semax ttS (x <- (fun _ => 0))
   foo h0. destruct H as [_ h0]. foo h0. foo H1.
   apply follows_delay. apply follows_nil => //. 
   exists (update x 0 x0). split => //. rewrite /update.
-  have h: Zeq_bool x x = true. by rewrite -Zeq_is_eq_bool.
+  have h: x =? x = true by apply Nat.eqb_refl.
   apply n_at_x_intro. by rewrite h. by apply bisim_reflexive.     
 have hs1: semax (n_at_x 0) (Swhile tt (x <- a0)) (Eventually n).
 have h0 := semax_assign ttS x a0.

@@ -102,8 +102,9 @@ Defined.
  
   
 Variable y: id. 
-Axiom xy: Zeq_bool x y = false.   
-Axiom yx: Zeq_bool y x = false.   
+Axiom xy: x =? y = false.
+Lemma yx : y =? x = false.
+Proof. by rewrite Nat.eqb_sym; apply xy. Qed.
 Variable cond: expr. (* y <> 0 *)
 Axiom cond_tt: forall st, eval_true cond st -> (st y = 0 -> False).   
 Axiom cond_ff: forall st, eval_false cond st -> st y = 0.  
@@ -127,8 +128,6 @@ Lemma Sn: forall n, n + 1 = S n.
 Proof. 
 move => n. by lia.
 Qed.
-
-Require Import ClassicalEpsilon.
 
 (* Proposition 5.3 *)
 Lemma spec: semax u0 s (Up 0).
@@ -161,7 +160,7 @@ Iter (Updt (ttS andS a_t) y (fun st : state => st y - 1) *** (<< ttS >>)) ***
       foo h3. foo H0. foo H3. foo h2. simpl in h0. 
       have h2: skips tr'1. apply IHn => {IHn}. have h2 := follows_hd H4. 
       rewrite -h2 => {h2}. rewrite H0 => {H0}. rewrite h0 => {h0}. 
-      rewrite /update. have h0: Zeq_bool y y = true. by rewrite -Zeq_is_eq_bool.
+      rewrite /update. have h0: y =? y = true by apply Nat.eqb_refl.
       rewrite h0 => {h0}. by apply Sn_1. exists tr'0. split; first done. 
       move: H1 => [st1 [_ h2]]. foo h2. simpl in H0. foo H2. foo H4.
       apply follows_delay. foo H2. foo H5. apply follows_nil => //. 
@@ -225,11 +224,11 @@ have h0: (<<u0>> *** Iter ((Skips *** Updt ttS x (fun st => st x + 1))
             split. apply red_tau. by simpl.
             apply red_stop.
             simpl. rewrite /update. 
-            have h: Zeq_bool x x = true; first by rewrite -Zeq_is_eq_bool.
+            have h: x =? x = true by apply Nat.eqb_refl.
             rewrite h => {h}. have ->: st0 x + 1 = S (st0 x) by lia. by auto with arith. rewrite H0.
             apply bisim_cons. have := bisim_symmetric h1. by apply.
-            simpl. rewrite H0. rewrite /update. have h: Zeq_bool x x = true;
-            first by rewrite -Zeq_is_eq_bool. rewrite h => {h}.  split. by apply Sn. split.
+            simpl. rewrite H0. rewrite /update. have h: x =? x = true by apply Nat.eqb_refl.
+            rewrite h => {h}.  split. by apply Sn. split.
             by apply H1. have := follows_setoid _ H5 _ (bisim_symmetric h1). apply.
             move => tr0 h2 tr1 h3. move: h2 => [st1 [h2 h4]]. foo h4.
             exists st1. split => //. have := bisim_symmetric h3. by apply. 
