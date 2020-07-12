@@ -3,6 +3,7 @@ Require Import Trace.
 Require Import Language. 
 Require Import Semax.
 Require Import Assert.
+Require Import Lia.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -118,12 +119,12 @@ Definition u0: assertS := fun st => st x = 0.
 
 Lemma Sn_1: forall n, S n - 1 = n. 
 Proof. 
-move => n. by omega.
+move => n. by lia.
 Qed.  
 
 Lemma Sn: forall n, n + 1 = S n. 
 Proof. 
-move => n. by omega.
+move => n. by lia.
 Qed. 
 
 (* Proposition 5.3 *)
@@ -221,7 +222,7 @@ have h0: (<<u0>> *** Iter ((Skips *** Updt ttS x (fun st => st x + 1))
             split. split. split. simpl. apply red_tau. by simpl. apply red_stop. 
             simpl. rewrite /update. 
             have h: Zeq_bool x x = true; first by rewrite -Zeq_is_eq_bool.
-            rewrite h => {h}. omega. rewrite H0. 
+            rewrite h => {h}. lia. rewrite H0. 
             apply bisim_cons. have := bisim_symmetric h1. by apply.
             simpl. rewrite H0. rewrite /update. have h: Zeq_bool x x = true;
             first by rewrite -Zeq_is_eq_bool. rewrite h => {h}.  by apply Sn.
