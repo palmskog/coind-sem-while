@@ -2,7 +2,10 @@ Require Import SsrExport.
 Require Import Trace.
 Require Import Language. 
 Require Import Semax.
+Require Import Semax_sound.
 Require Import Assert.
+Require Import AssertClassical.
+Require Import BigFunct.
 Require Import Coq.Program.Equality.
 
 Set Implicit Arguments.
@@ -10,9 +13,9 @@ Unset Strict Implicit.
 Import Prenex Implicits.
 
 Definition udt (u: assertS) (x: id) (a: expr): assertS :=
-fun st => { st0 : state & prod (u st0) ((update x (a st0) st0) = st) }. 
+fun st => exists st0 : state, (u st0) /\ ((update x (a st0) st0) = st).
 
-Inductive tsemax2: assertS -> stmt -> assertS -> Type :=
+Inductive tsemax2: assertS -> stmt -> assertS -> Prop :=
 
 | tsemax2_skip: forall u, tsemax2 u Sskip u 
 
@@ -83,7 +86,7 @@ Proof. move => s. induction s.
   move => [n0 h0]. destruct h0 as [h0 [h1 h2]]. done. 
 Qed.        
 
-Inductive len: nat -> trace -> Type :=
+Inductive len: nat -> trace -> Prop :=
 | len_stop: forall n st, len n (Tnil st)
 | len_delay: forall n st tr, len n tr -> len (S n) (Tcons st tr).
 
@@ -106,7 +109,7 @@ rewrite (_: m = (m - n) + n); last by omega.
 have := h _ _ _ h1. apply. Qed.         
 
 Definition Len (p: assertT) (n: nat) : assertS := fun st =>
-forall tr, prod (hd tr = st) (satisfy p tr) -> len n tr.
+forall tr, (hd tr = st) /\ (satisfy p tr) -> len n tr.
 
 (* Lemma 4.1: ⌈P⌉n is anti-monotone. *)
 Lemma Len_monotone: forall n p q, q =>> p -> (Len p n) ->> (Len q n).
@@ -119,21 +122,24 @@ have : len n tr0. apply h0 => //. clear h0 h1 h2. move => h0.
 have := len_monotone hnm h0. done. Qed.
 
 (* Same as semax_total from Semax_sound.v. *)
-Lemma semax_post: forall u s p, semax u s p -> forall st, u st ->
-{tr : trace & prod (hd tr = st) (satisfy p tr)}.  
-Admitted. 
-
+Lemma semax_post: forall u s p, semax u s p -> forall st, u st -> exists tr : trace, (hd tr = st) /\ (satisfy p tr).
+Proof.
+move => U S P hsemax s hU.
+exists (Exec S s). split.
+- by apply Exec_hd.
+- apply (semax_sound hsemax (Exec_correct_exec _ _) hU). 
+Qed.
 
 Definition after (p: assertT) (q: assertT) := 
-let: existT p hp := p in let: existT q hq := q in
-forall tr, p tr -> {tr0: trace & follows q tr tr0}. 
+let: exist p hp := p in let: exist q hq := q in
+forall tr, p tr -> exists tr0: trace, follows q tr tr0. 
 
 (* Lemma 4.2: ◃ is monotone on the left argument . *)
 Lemma after_monotone_L: forall p0 p1 q, p0 =>> p1 ->
 after p1 q -> after p0 q.
 Proof. move => [p0 hp0] [p1 hp1] [q hq]. move => h0 h1 tr1 h2.
 have := h0 _ h2. simpl. clear h2. move => h2. have := h1 _ h2.
-done. Qed.     
+done. Qed.
  
 Fixpoint cut (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace): trace :=
 match h with
