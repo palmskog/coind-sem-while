@@ -48,8 +48,6 @@ Inductive tsemax2: assertS -> stmt -> assertS -> Prop :=
   (forall x, tsemax2 (u x) s (v x)) ->
   tsemax2 (exS u) s (exS v). 
 
- 
-
 Lemma tsemax2_conseq_L: forall s u1 u2 v,
 u1 ->> u2 -> tsemax2 u2 s v -> tsemax2 u1 s v.
 Proof. 
@@ -141,6 +139,25 @@ after p1 q -> after p0 q.
 Proof. move => [p0 hp0] [p1 hp1] [q hq]. move => h0 h1 tr1 h2.
 have := h0 _ h2. simpl. clear h2. move => h2. have := h1 _ h2.
 done. Qed.
+
+Definition fin_dec (tr0 : trace) (st0 : state) (h: fin tr0 st0) :
+ { tr : trace | tr = Tnil st0 }+{ tr : trace & { tr' : trace & { st' : state | tr = Tcons st' tr' /\ fin tr' st0 } } }.
+destruct tr0.
+- left; exists (Tnil s).
+  by inversion h.
+- right; exists (Tcons s tr0); exists tr0; exists s.
+  by inversion h; subst.
+Defined.
+
+Fail Fixpoint cut' (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace) {struct h}: trace :=
+match fin_dec h with
+ | inl _ => tr1
+ | inr (existT tr (existT tr' (exist st' (conj Heq Hfin)))) =>
+     match tr1 with
+     | Tnil s => Tnil s
+     | Tcons st0 tr2 => cut Hfin tr2
+     end
+ end.
  
 Fixpoint cut (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace): trace :=
 match h with
