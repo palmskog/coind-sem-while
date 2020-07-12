@@ -18,8 +18,8 @@ x := 0; while true (x := x + 1)
 *) 
 
 Definition a0: expr := (fun st => st x + 1).
-Axiom update_x_a0: forall st, (st x) + 1 = update x (a0 st) st x. 
-
+Lemma update_x_a0: forall st, (st x) + 1 = update x (a0 st) st x.
+Proof. by rewrite /update Nat.eqb_refl. Qed.
 
 Inductive n_at_x n: assertS :=
 | n_at_x_intro: forall st, (st x) = n -> n_at_x n st.  

@@ -54,6 +54,6 @@ make   # or make -j <number-of-cores-on-your-machine>
 - `Assert.v` defines the assertion language and properties of the assertions.
 - `Hoare.v` defines the partial-correctness Hoare logic, embedding and projection.
 - `HoareTotal.v` defines the total-correctness Hoare logic, embedding and projection.
-- `Markov.v` defines an example inspired by Markov's principle
-- `Liveness.v` defines an example that demonstrate reasoning about liveness.
+- `Markov.v` defines an example inspired by Markov's principle.
+- `Liveness.v` defines an example that demonstrates reasoning about liveness.
 - `Weakbism.v` defines an example based on weak trace equivalence.
