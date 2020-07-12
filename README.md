@@ -1,15 +1,16 @@
-# Trace-Based Coinductive Operational Semantics for While
+# Coinductive Trace-Based Semantics for While
 
 [![CI][action-shield]][action-link]
 
-[action-shield]: https://github.com/palmskog/coind-opsem-while/workflows/CI/badge.svg?branch=master
-[action-link]: https://github.com/palmskog/coind-opsem-while/actions?query=workflow%3ACI
+[action-shield]: https://github.com/palmskog/coind-sem-while/workflows/CI/badge.svg?branch=master
+[action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow%3ACI
 
 
 
 
-Four equivalent coinductive operational semantics in Coq for the While language accounting
-for both terminating and non-terminating program runs through coinductive traces.
+Four equivalent operational semantics, and Hoare logic, for the
+While language in Coq. The semantics account for both terminating and non-terminating
+program runs through coinductive traces.
 
 ## Meta
 
@@ -18,15 +19,16 @@ for both terminating and non-terminating program runs through coinductive traces
   - Tarmo Uustalu (initial)
 - Compatible Coq versions: 8.10 or later
 - Additional dependencies: none
-- Coq namespace: `CoindOpSemWhile`
+- Coq namespace: `CoindSemWhile`
 - Related publication(s):
+  - [A Hoare logic for the coinductive trace-based big-step semantics of While](https://arxiv.org/abs/1412.6579) doi:[10.2168/LMCS-11(1:1)2015](https://doi.org/10.2168/LMCS-11(1:1)2015)
   - [Trace-Based Coinductive Operational Semantics for While](https://link.springer.com/chapter/10.1007/978-3-642-03359-9_26) doi:[10.1007/978-3-642-03359-9_26](https://doi.org/10.1007/978-3-642-03359-9_26)
 
 ## Building instructions
 
 ``` shell
-git clone https://github.com/palmskog/coind-opsem-while
-cd coind-opsem-while
+git clone https://github.com/palmskog/coind-sem-while
+cd coind-sem-while
 make   # or make -j <number-of-cores-on-your-machine>
 ```
 
@@ -50,3 +52,9 @@ make   # or make -j <number-of-cores-on-your-machine>
   functional and the big-step functional semantics are equivalent.
 - `Alternatives.v` gives the complete formalizations of the alternative
   big-step semantics considered in the accompanying paper.
+- `Assert.v` defines the assertion language and properties of the assertions.
+- `Hoare.v` defines the partial-correctness Hoare logic, embedding and projection.
+- `HoareTotal.v` defines the total-correctness Hoare logic, embedding and projection.
+- `Markov.v` defines an example inspired by Markov's principle
+- `Liveness.v` defines an example that demonstrate reasoning about liveness.
+- `Weakbism.v` defines an example based on weak trace equivalence.

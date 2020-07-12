@@ -1,0 +1,32 @@
+opam-version: "2.0"
+maintainer: "palmskog@gmail.com"
+version: "dev"
+
+homepage: "https://github.com/palmskog/coind-sem-while"
+dev-repo: "git+https://github.com/palmskog/coind-sem-while.git"
+bug-reports: "https://github.com/palmskog/coind-sem-while/issues"
+license: "Unknown"
+
+synopsis: "Big-step, small-step, relational, and functional style operational semantics, as well as Hoare logic, for While in Coq using coinductive traces"
+description: """
+Four equivalent operational semantics, and Hoare logic, for the
+While language in Coq. The semantics account for both terminating and non-terminating
+program runs through coinductive traces."""
+
+build: ["dune" "build" "-p" name "-j" jobs]
+depends: [
+  "dune" {>= "2.5"}
+  "coq" {(>= "8.10" & < "8.13~") | (= "dev")}
+]
+
+tags: [
+  "category:Computer Science/Semantics and Compilation/Semantics"
+  "keyword:coinduction"
+  "keyword:while"
+  "keyword:Hoare logic"
+  "logpath:CoindSemWhile"
+]
+authors: [
+  "Keiko Nakata"
+  "Tarmo Uustalu"
+]
