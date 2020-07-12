@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - abyss
   pull_request:
     branches:
-      - '**'
+      - abyss
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: coq-community/docker-coq-action@v1
         with:
-          opam_file: 'coq-coind-opsem-while.opam'
+          opam_file: 'coq-coind-hoare-while.opam'
           custom_image: ${{ matrix.image }}
 
 # See also:

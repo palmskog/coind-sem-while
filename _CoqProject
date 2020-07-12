@@ -1,4 +1,4 @@
--R theories CoindOpSemWhile
+-R theories CoindHoareWhile
 
 theories/SsrExport.v
 theories/Alternatives.v

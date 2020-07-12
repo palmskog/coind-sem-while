@@ -1,6 +1,7 @@
 ---
-fullname: Trace-Based Coinductive Operational Semantics for While
-shortname: coind-opsem-while
+fullname: Hoare Logic for Coinductive Trace-Based Semantics of While
+shortname: coind-sem-while
+opam_name: coq-coind-hoare-while
 organization: palmskog
 community: false
 action: true
@@ -8,17 +9,17 @@ coqdoc: false
 dune: true
 
 synopsis: >-
-  Big-step, small-step, relational, and functional style operational
-  semantics for While in Coq using coinductive traces
+  Soundness and completeness in Coq of a Hoare logic with respect to a
+  coinductive trace-based operational semantics for While
 
 description: |-
-  Four equivalent coinductive operational semantics in Coq for the While language accounting
-  for both terminating and non-terminating program runs through coinductive traces.
+  A Hoare logic for coinductive trace-based operational semantics for the
+  While language, proven sound and complete in Coq.
 
 publications:
-- pub_url: https://link.springer.com/chapter/10.1007/978-3-642-03359-9_26
-  pub_title: Trace-Based Coinductive Operational Semantics for While
-  pub_doi: 10.1007/978-3-642-03359-9_26
+- pub_url: https://arxiv.org/abs/1412.6579
+  pub_title: A Hoare logic for the coinductive trace-based big-step semantics of While
+  pub_doi: 10.2168/LMCS-11(1:1)2015
 
 authors:
 - name: Keiko Nakata
@@ -44,11 +45,12 @@ tested_coq_opam_versions:
 - version: '8.11'
 - version: '8.10'
 
-namespace: CoindOpSemWhile
+namespace: CoindHoareWhile
 
 keywords:
 - name: coinduction
 - name: while
+- name: Hoare logic
 
 categories:
 - name: Computer Science/Semantics and Compilation/Semantics
@@ -57,30 +59,19 @@ build: |-
  ## Building instructions
 
  ``` shell
- git clone https://github.com/palmskog/coind-opsem-while
- cd coind-opsem-while
+ git clone https://github.com/palmskog/coind-sem-while
+ cd coind-sem-while
+ git checkout abyss
  make   # or make -j <number-of-cores-on-your-machine>
  ```
 
 documentation: |-
   ## Documentation
 
-  - `Trace.v` defines traces and bisimilarity. It proves
-    bisimilarity is reflexive, symmetric and transitive.
-  - `Language.v` defines the While language.
-  - BigRel.v defines the big-step relational semantics
-    and proves that it is deterministic and a setoid predicate.
-  - `SmallRel.v` defines the small-step relational semantics
-    and proves that it is deterministic and a setoid predicate
-    and that the big-step relational and small-step relational
-    semantics are equivalent.
-  - `BigFunct.v` defines the big-step functional semantics and
-    proves that the big-step relational and the big-step functional
-    semantics are equivalent.
-  - `SmallFunct.v` defines the small-step functional semantics
-    and proves that the small-step relational and the small-step
-    functional semantics are equivalent and that the small-step
-    functional and the big-step functional semantics are equivalent.
-  - `Alternatives.v` gives the complete formalizations of the alternative
-    big-step semantics considered in the accompanying paper.
+  - `Assert.v`: the assertion language and properties of the assertions
+  - `Hoare.v`: the partial-correctness Hoare logic, embedding and projection
+  - `HoareTotal.v`: the total-correctness Hoare logic, embedding and projection
+  - `Markov.v`: corresponds to Section 5.1
+  - `Liveness.v`: corresponds to Section 5.2
+  - `Weakbism.v`: corresponds to Section 5.3
 ---

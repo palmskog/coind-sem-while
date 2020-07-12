@@ -1,4 +1,4 @@
 (coq.theory
- (name CoindOpSemWhile)
- (package coq-coind-opsem-while)
- (synopsis "Big-step, small-step, relational, and functional style operational semantics for While in Coq using coinductive traces"))
+ (name CoindHoareWhile)
+ (package coq-coind-hoare-while)
+ (synopsis "Soundness and completeness in Coq of a Hoare logic with respect to a coinductive trace-based operational semantics for While"))
