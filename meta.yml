@@ -7,6 +7,7 @@ community: false
 action: true
 coqdoc: false
 dune: true
+doi: 10.1007/978-3-642-03359-9_26
 
 synopsis: >-
   Big-step, small-step, relational, and functional style operational
@@ -17,7 +18,7 @@ description: |-
   for both terminating and non-terminating program runs through coinductive traces.
 
 publications:
-- pub_url: https://link.springer.com/chapter/10.1007/978-3-642-03359-9_26
+- pub_url: http://www.cs.ioc.ee/~tarmo/papers/tphols09.pdf
   pub_title: Trace-Based Coinductive Operational Semantics for While
   pub_doi: 10.1007/978-3-642-03359-9_26
 
@@ -70,7 +71,7 @@ documentation: |-
   - `Trace.v` defines traces and bisimilarity. It proves
     bisimilarity is reflexive, symmetric and transitive.
   - `Language.v` defines the While language.
-  - BigRel.v defines the big-step relational semantics
+  - `BigRel.v` defines the big-step relational semantics
     and proves that it is deterministic and a setoid predicate.
   - `SmallRel.v` defines the small-step relational semantics
     and proves that it is deterministic and a setoid predicate
