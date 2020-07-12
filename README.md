@@ -10,7 +10,8 @@
 
 Four equivalent operational semantics, and Hoare logic, for the
 While language in Coq. The semantics account for both terminating and non-terminating
-program runs through coinductive traces.
+program runs through coinductive traces. All semantic relations are impredicative, and
+impredicativity is used to encode induction-recursion.
 
 ## Meta
 
