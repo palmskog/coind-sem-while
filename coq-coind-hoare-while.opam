@@ -7,10 +7,10 @@ dev-repo: "git+https://github.com/palmskog/coind-sem-while.git"
 bug-reports: "https://github.com/palmskog/coind-sem-while/issues"
 license: "Unknown"
 
-synopsis: "Soundness and completeness in Coq of a Hoare logic with respect to a coinductive trace-based operational semantics for While"
+synopsis: "Hoare logic in Coq for coinductive trace-based operational semantics of While"
 description: """
-A Hoare logic for coinductive trace-based operational semantics for the
-While language, proven sound and complete in Coq."""
+A Hoare logic in Coq for coinductive trace-based operational semantics for the
+While language"""
 
 build: ["dune" "build" "-p" name "-j" jobs]
 depends: [

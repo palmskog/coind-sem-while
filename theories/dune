@@ -1,4 +1,4 @@
 (coq.theory
  (name CoindHoareWhile)
  (package coq-coind-hoare-while)
- (synopsis "Soundness and completeness in Coq of a Hoare logic with respect to a coinductive trace-based operational semantics for While"))
+ (synopsis "Hoare logic in Coq for coinductive trace-based operational semantics of While"))

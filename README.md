@@ -11,8 +11,8 @@
 [doi-shield]: https://zenodo.org/badge/DOI/10.2168/LMCS-11(1:1)2015.svg
 [doi-link]: https://doi.org/10.2168/LMCS-11(1:1)2015
 
-A Hoare logic for coinductive trace-based operational semantics for the
-While language, proven sound and complete in Coq.
+A Hoare logic in Coq for coinductive trace-based operational semantics for the
+While language
 
 ## Meta
 
