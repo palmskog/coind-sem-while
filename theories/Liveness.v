@@ -11,23 +11,23 @@ Import Prenex Implicits.
 
 Variable x : id.
 Variable tt : expr.
-Axiom tt_true: forall st, is_true (tt st) = true.
+Axiom tt_true : forall st, is_true (tt st) = true.
 
-Definition incr_x: expr := (fun st => st x + 1).
+Definition incr_x : expr := fun st => st x + 1.
 
-Lemma update_x_incr_x: forall st,
- update x (incr_x st) st x = (st x) + 1.
+Lemma update_x_incr_x : forall st,
+ update x (incr_x st) st x = st x + 1.
 Proof. by rewrite /update Nat.eqb_refl. Qed.
 
-Inductive eventually_x_is_n (n: nat): trace -> Prop :=
+Inductive eventually_x_is_n (n: nat) : trace -> Prop :=
 | x_is_n_nil: forall st, st x = n -> eventually_x_is_n n (Tnil st)
 | x_is_n_cons: forall st tr, st x = n -> eventually_x_is_n n (Tcons st tr)
 | x_is_n_delay: forall st tr, 
   eventually_x_is_n n tr -> eventually_x_is_n n (Tcons st tr).
 
 Lemma eventually_x_is_n_setoid: forall n tr,
-eventually_x_is_n n tr -> forall tr0, bisim tr tr0 ->
-eventually_x_is_n n tr0. 
+ eventually_x_is_n n tr -> forall tr0, bisim tr tr0 ->
+ eventually_x_is_n n tr0.
 Proof. 
 induction 1. 
 - move => tr0 h0. foo h0. apply x_is_n_nil => //. 
@@ -41,15 +41,13 @@ exists (eventually_x_is_n n).
 move => tr0 h0 tr1 h1. exact: (eventually_x_is_n_setoid h0 h1).
 Defined.
 
+Definition x_is_zero : assertS := fun st => st x = 0.
+
 (*
 x := 0; while true (x := x + 1)
 *)
 
-Definition s : stmt :=
-  x <- (fun _ => 0);;
-  Swhile tt (x <- incr_x).
-
-Definition x_is_zero : assertS := fun st => st x = 0.
+Definition s : stmt := x <- (fun _ => 0);; Swhile tt (x <- incr_x).
 
 (* Proposition 5.2 *)
 Lemma prg_spec: forall (n:nat), semax ttS s (Eventually_x_is_n n).
@@ -64,7 +62,7 @@ have hs0: semax ttS (x <- (fun _ => 0))
   exists (update x 0 x0). split => //. rewrite /update.
   have h: x =? x = true by apply Nat.eqb_refl.
   by rewrite /x_is_zero h. by apply bisim_reflexive.
-have hs1: semax x_is_zero (Swhile tt (x <- incr_x)) (Eventually_x_is_n n).
+have hs1 : semax x_is_zero (Swhile tt (x <- incr_x)) (Eventually_x_is_n n).
 have h0 := semax_assign ttS x incr_x.
 have h1 : (ttS andS eval_true tt) ->> ttS; first done.
 have h2 : (Updt ttS x incr_x) =>> (Updt ttS x incr_x) *** [| ttS |]. 
@@ -73,7 +71,7 @@ have h2 : (Updt ttS x incr_x) =>> (Updt ttS x incr_x) *** [| ttS |].
   have := mk_singleton_nil. apply. done. move => st0 tr0. 
   have := follows_delay _ (hcoind tr0). apply. 
 have h3 := semax_conseq h1 h2 h0 => {h0 h1 h2}.
-have h0: x_is_zero ->> ttS by [].
+have h0 : x_is_zero ->> ttS by [].
 have h1 := semax_while h0 h3 => {h0 h3}.
 have h0 : ((<< x_is_zero >>) ***
  Iter (Updt ttS x incr_x *** (<< ttS >>)) *** ([|eval_false tt|])) =>>
@@ -95,8 +93,8 @@ have h0 : ((<< x_is_zero >>) ***
       foo H2. foo h1. foo H4. foo H3. foo H2. simpl. apply x_is_n_delay.
       have h0 := follows_singleton H5.
       have h1: append (iter (append (updt ttS x incr_x) (dup ttS)))
-      (singleton (eval_false tt)) tr'1. exists tr'1. 
-      split; first done. 
+       (singleton (eval_false tt)) tr'1.
+      exists tr'1; split; first done.
       have := follows_setoid_R (@singleton_setoid _) H5 (bisim_symmetric h0).
       by apply. have h2 := IHn _ h1 => {h1 H5}.
       have h1: st0 x + S n = hd tr'1 x + n. 

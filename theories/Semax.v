@@ -11,7 +11,7 @@ Import Prenex Implicits.
 
 Inductive semax: assertS -> stmt -> assertT -> Prop :=
 
-| semax_skip: forall u,   semax u Sskip ([|u|]) 
+| semax_skip: forall u, semax u Sskip ([|u|])
 
 | semax_assign: forall u x a, semax u (Sassign x a) (Updt u x a)
 
@@ -25,7 +25,7 @@ Inductive semax: assertS -> stmt -> assertT -> Prop :=
   semax (u andS eval_false a) s2 p ->
   semax u (Sifthenelse a s1 s2) (<< u >> *** p)
 
-| semax_while:forall a s u u0 p, 
+| semax_while: forall a s u u0 p,
   u0 ->> u ->
   semax  (u andS eval_true a) s (p *** [|u|]) ->
   semax u0 (Swhile a s) (<<u0>> *** (Iter (p *** <<u>>)) *** [|eval_false a|])
@@ -36,9 +36,9 @@ Inductive semax: assertS -> stmt -> assertT -> Prop :=
   semax u2 s p2 ->
   semax u1 s p1
 
-| semax_ex: forall s (A: Set) (u: A -> assertS) (p: A -> assertT),
+| semax_ex: forall s (A: Type) (u: A -> assertS) (p: A -> assertT),
   (forall x, semax (u x) s (p x)) ->
-  semax (exS u) s (exT p).   
+  semax (exS u) s (exT p).
 
 Lemma semax_conseq_R: forall u s p q,
 p =>> q -> semax u s p -> semax u s q. 

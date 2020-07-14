@@ -24,7 +24,7 @@ CoInductive cofinally_B : nat -> trace -> Prop :=
   st x = n -> (B n -> False) -> cofinally_B n (Tcons st (Tcons st tr)).
 
 Lemma cofinally_B_setoid: forall n tr0, cofinally_B n tr0 ->
-forall tr1, bisim tr0 tr1 -> cofinally_B n tr1.
+ forall tr1, bisim tr0 tr1 -> cofinally_B n tr1.
 Proof. 
 cofix COINDHYP. move => n tr0 h0 tr1 h1. foo h0. 
 - foo h1. foo H3. have := cofinally_B_nil (refl_equal (st x)) H0; apply. 
@@ -32,7 +32,7 @@ cofix COINDHYP. move => n tr0 h0 tr1 h1. foo h0.
   exact: cofinally_B_delay (COINDHYP _ _ H _ H5) (refl_equal (st x)) H1. 
 Qed.
 
-Definition Cofinally_B (n: nat): assertT. 
+Definition Cofinally_B (n: nat) : assertT.
 exists (fun tr => cofinally_B n tr).
 move => tr0 h0 tr1 h1. simpl. simpl in h0. 
 have := cofinally_B_setoid h0 h1. apply. 
@@ -54,7 +54,7 @@ apply. apply h0.
 Qed.
 
 (* Lemma 5.1: cofinally_B 0 is stronger than nondivergent. *)
-Lemma Cofinally_B_negInfinite: Cofinally_B 0 =>> negT Infinite.
+Lemma Cofinally_B_negInfinite : Cofinally_B 0 =>> negT Infinite.
 Proof.
 move => tr0 h0 h1. simpl in h0. 
 have h2: forall n, exists tr : trace, (cofinally_B n tr) /\ (infinite tr).
@@ -75,15 +75,13 @@ Proof. by move => n; lia. Qed.
 
 Definition x_is_zero : assertS := fun st => st x = 0.
 Definition B_holds_for_x : assertS := fun st => B (st x).
-
 Definition incr_x : expr := fun st => st x + 1.
 
 (*
 x := 0; while cond (x := x + 1)
 *)
 
-Definition s : stmt :=
-  x <- (fun _ => 0);; Swhile cond (x <- incr_x).
+Definition s : stmt := x <- (fun _ => 0);; Swhile cond (x <- incr_x).
 
 (* Proposition 5.1 *)
 Lemma Markov_search :
@@ -109,7 +107,7 @@ have h1 : (Updt u1 x incr_x) =>> ((Updt u1 x incr_x)  *** [|ttS|]).
     have := mk_singleton_nil; apply. done. 
   - move => st0 tr0; have := follows_delay _ (hcoind _); by apply. 
 have h2 := semax_conseq_R h1 h0 => {h0 h1}.
-have h0: x_is_zero ->> ttS; first done. 
+have h0 : x_is_zero ->> ttS by [].
 have h1 := semax_while h0 h2 => {h0 h2}.
 have h0 :
   ((<< x_is_zero >>) *** Iter (Updt u1 x incr_x *** (<< ttS >>)) *** ([|eval_false cond|])) =>>

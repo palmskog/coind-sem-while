@@ -706,10 +706,10 @@ exists st0. foo h1. foo H1. foo h2. foo H2.
 split; [done | reflexivity]. 
 Defined.
 
-Definition exS (A: Set) (u: A -> assertS): assertS :=
+Definition exS (A: Type) (u: A -> assertS) : assertS :=
 fun st => exists x, u x st.
 
-Definition exT (A: Set) (p: A -> assertT): assertT. 
+Definition exT (A: Type) (p: A -> assertT) : assertT.
 exists (fun tr => exists x, satisfy (p x) tr).
 move => tr0 [x h0] tr1 h1. exists x. destruct (p x) as [f0 h2]. 
 simpl. simpl in h0. have := h2 _ h0 _ h1; apply. 
@@ -791,10 +791,9 @@ Qed.
 Lemma Iter_unfold_1: forall p, (Iter p *** p) =>> Iter p. 
 Proof. 
 move => [p hp] tr h0. simpl. simpl in h0.
-have := iter_unfold_1 h0. by apply. Qed. 
-      
+have := iter_unfold_1 h0. by apply.
+Qed. 
 
-(* *)
 Lemma Iter_unfold_2: forall p, ([|ttS|] orT (Iter p *** p)) =>> Iter p. 
 Proof. move => [p hp] tr0; simpl => h0. foo h0. 
 - destruct H as [st0 [_ h0]]. foo h0. by apply iter_stop. 
@@ -966,8 +965,7 @@ move => tr0 h0 h1. foo h1.
   - move: H0 => [st0 [h0 h2]]. foo h2. foo H1. foo h1. foo H2. 
     have := follows_delay _ (hcoind _ h0 H1). by apply.   
   - foo h1. have := follows_delay _ (hcoind0 _ _ _ H H3). apply.
-Qed. 
-
+Qed.
 
 (* Lemma 3.4, (12) *)
 Lemma Last_Last: forall p q, 
@@ -1019,4 +1017,4 @@ hd tr1 = st0 -> hd (tr0 +++ tr1) = hd tr0.
 Proof. induction 1. 
 - move => tr0 h0. rewrite trace_append_nil. done. 
 - move => tr0 h0. rewrite trace_append_cons. by simpl. 
-Qed. 
+Qed.

@@ -44,7 +44,7 @@ Inductive tsemax2: assertS -> stmt -> assertS -> Prop :=
   tsemax2 u2 s v2 ->
   tsemax2 u1 s v1
 
-| tsemax2_ex: forall s (A: Set) (u: A -> assertS) (v: A -> assertS),
+| tsemax2_ex: forall s (A: Type) (u: A -> assertS) (v: A -> assertS),
   (forall x, tsemax2 (u x) s (v x)) ->
   tsemax2 (exS u) s (exS v). 
 
@@ -141,30 +141,29 @@ have := h0 _ h2. simpl. clear h2. move => h2. have := h1 _ h2.
 done. Qed.
 
 Definition fin_dec (tr0 : trace) (st0 : state) (h: fin tr0 st0) :
- { tr : trace | tr = Tnil st0 }+{ tr : trace & { tr' : trace & { st' : state | tr = Tcons st' tr' /\ fin tr' st0 } } }.
+ { tr : trace & { st1 : state | tr0 = Tcons st1 tr /\ fin tr st0 } }+{ tr0 = Tnil st0 }.
 destruct tr0.
-- left; exists (Tnil s).
-  by inversion h.
-- right; exists (Tcons s tr0); exists tr0; exists s.
+- by right; inversion h.
+- left; exists tr0; exists s.
   by inversion h; subst.
 Defined.
 
-Fail Fixpoint cut' (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace) {struct h}: trace :=
+Fail Fixpoint cut' (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace) : trace :=
 match fin_dec h with
- | inl _ => tr1
- | inr (existT tr (existT tr' (exist st' (conj Heq Hfin)))) =>
-     match tr1 with
-     | Tnil s => Tnil s
-     | Tcons st0 tr2 => cut Hfin tr2
-     end
- end.
+| inleft (existT tr' (exist st' (conj Heq Hfin))) =>
+  match tr1 with
+  | Tnil s => Tnil s
+  | Tcons st0 tr2 => cut' Hfin tr2
+  end    
+| inright _ => tr1
+end.
  
 Fixpoint cut (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace): trace :=
 match h with
 | fin_nil _ => tr1
 | fin_delay _ _ _ h' => 
   match tr1 with | Tnil _ => tr1 | Tcons st0 tr1' => cut h' tr1' end
-end. 
+end.
 
 Lemma tsemax2_complete_aux: forall p q tr0 st0 (h:fin tr0 st0), 
 forall tr1 tr2, hd tr1 = st0 -> follows q (tr0 +++ tr1) tr2 ->   
@@ -659,15 +658,7 @@ Proof. induction 1.
     simpl. exists tr0. split => //. clear h0. destruct h1 as [tr1 [h0 h1]]. 
     exists tr1. split => //. destruct h0 as [st1 [h0 h2]]. foo h2. foo h1. 
     apply follows_nil => //. exists x. by rewrite hp.                
-Qed.      
-               
-(*
-forall m w r, after ([|w|] *** p) r -> tsemax2 (u andS w andS (Len (p *** r) m)) s 
-(Last ([|w|] *** p) andS (Len r m)). 
-| tsemax2_ex: forall s (A: Set) (u: A -> assertS) (v: A -> assertS),
-  (forall x, tsemax2 (u x) s (v x)) ->
-  tsemax2 (exS u) s (exS v). 
-*)
+Qed.
 
 (* Corollary 4.3 *)
 Lemma tsemax2_complete_main: forall u s p, semax u s p ->

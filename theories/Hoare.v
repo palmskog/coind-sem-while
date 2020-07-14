@@ -39,17 +39,16 @@ Inductive hsemax: assertS -> stmt -> assertS -> Prop :=
   hsemax u2 s v2 ->
   hsemax u1 s v1
 
-| hsemax_ex: forall s (A: Set) (u: A -> assertS) (v: A -> assertS),
+| hsemax_ex: forall s (A : Type) (u: A -> assertS) (v: A -> assertS),
   (forall x, hsemax (u x) s (v x)) ->
   hsemax (exS u) s (exS v). 
 
 Lemma hsemax_conseq_L: forall s u1 u2 v,
 u1 ->> u2 -> hsemax u2 s v -> hsemax u1 s v.
-Proof. 
-move => s u1 u2 v h0 h1. 
-have := hsemax_conseq h0 (@assertS_imp_refl v) h1. 
-by apply. 
-Qed. 
+Proof.
+move => s u1 u2 v h0 h1.
+exact: hsemax_conseq h0 (@assertS_imp_refl v) h1.
+Qed.
 
 Lemma hsemax_conseq_R: forall s u v1 v2,
 v2 ->> v1 -> hsemax u s v2 -> hsemax u s v1. 
@@ -59,28 +58,12 @@ have := hsemax_conseq (@assertS_imp_refl u)  h0 h1.
 by apply. 
 Qed.
 
-(*
-Inductive loopinv (a: expr) (p:assertT) (u:assertS) : assertS :=
-| loopinv_here: forall  st, 
-  u st -> 
-  loopinv a p u st
-| loopinv_next: forall st tr st',
-  loopinv a p u st ->
-  is_true (a st) = true -> 
-  hd tr = st ->
-  p tr ->
-  last tr st' ->
-  loopinv a p u st'.   
-*) 
- 
-
-
-Lemma Last_destruct: forall (p: assertT) st tr,
-satisfy p tr -> fin tr st -> Last p st.
+Lemma Last_destruct : forall (p: assertT) st tr,
+ satisfy p tr -> fin tr st -> Last p st.
 Proof. 
 move => [f h] st tr h0 h1. simpl. simpl in h0. exists tr. 
 by split. 
-Qed.   
+Qed.
 
 (* Proposition 4.3: projecting the trace-based Hoare logic into 
    the partial-correctness Hoare logic. *)

@@ -21,8 +21,8 @@ Axiom tt_true: forall st, is_true (tt st) = true.
 Lemma yx : y =? x = false.
 Proof. by rewrite Nat.eqb_sym; apply xy. Qed.
 
-Definition incr_x: expr := (fun st => st x + 1).
-Definition decr_y: expr := (fun st => st y - 1).
+Definition incr_x: expr := fun st => st x + 1.
+Definition decr_y: expr := fun st => st y - 1.
 
 Inductive red_hd_x : trace -> trace -> Prop :=
 | red_hd_x_stop: forall st tr tr',
@@ -113,15 +113,15 @@ Definition x_is_zero : assertS := fun st => st x = 0.
 (*
 while true
  (y := x;
-  while y != x (y := y - 1);
+  while y != 0 (y := y - 1);
   x := x + 1)
 *)
 
 Definition s : stmt :=
-Swhile tt
-(y <- (fun st => st x);;
- Swhile cond (y <- decr_y);;
- x <- incr_x).
+ Swhile tt
+  (y <- (fun st => st x);;
+   Swhile cond (y <- decr_y);;
+   x <- incr_x).
 
 (* Proposition 5.3 *)
 Lemma spec: semax x_is_zero s (Up 0).
@@ -130,13 +130,12 @@ rewrite /s.
 pose a_t := eval_true cond.
 pose a_f := eval_false cond. 
 pose u_xy := fun st: state => st x = st y.      
-have h0 := semax_assign (ttS andS a_t) y (fun st => st y - 1).
+have h0 := semax_assign (ttS andS a_t) y decr_y.
 have h1 := semax_conseq_R (@Append_ttS _) h0 => {h0}.
 have h0: ttS ->> ttS; first done.
 have h2 := semax_while h0 h1 => {h0 h1}. 
-have h0: ((<< ttS >>) ***
-Iter (Updt (ttS andS a_t) y (fun st : state => st y - 1) *** (<< ttS >>)) ***
-[|eval_false cond|]) =>> Skips. 
+have h0 : ((<< ttS >>) *** Iter (Updt (ttS andS a_t) y decr_y *** (<< ttS >>)) ***
+ [|eval_false cond|]) =>> Skips.
 * clear h2. move => tr0 h0. simpl. simpl in h0. move h1: (hd tr0 y) => n. 
   move: tr0 h1 h0. induction n. 
   - move => tr0 h0 [tr1 [h1 h2]]. move: h1 => [st0 [_ h1]]. foo h1. foo H1. 
@@ -153,9 +152,9 @@ Iter (Updt (ttS andS a_t) y (fun st : state => st y - 1) *** (<< ttS >>)) ***
     - move: H => [tr1 [h1 h3]]. move: h1 => [st0 [h1 h4]]. foo h4. foo H2. 
       foo h3. foo H0. foo H3. foo h2. simpl in h0. 
       have h2: skips tr'1. apply IHn => {IHn}. have h2 := follows_hd H4. 
-      rewrite -h2 => {h2}. rewrite H0 => {H0}. rewrite h0 => {h0}. 
-      rewrite /update. have h0: y =? y = true by apply Nat.eqb_refl.
-      rewrite h0 => {h0}. by apply Sn_1. exists tr'0. split; first done. 
+      rewrite -h2 => {h2}. rewrite H0 => {H0}. rewrite /decr_y h0 => {h0}.
+      rewrite /update. have ->: y =? y = true by apply Nat.eqb_refl.
+      by apply Sn_1. exists tr'0. split; first done. 
       move: H1 => [st1 [_ h2]]. foo h2. simpl in H0. foo H2. foo H4.
       apply follows_delay. foo H2. foo H5. apply follows_nil => //. 
       exists tr'. split; first done. have h2 := follows_singleton H4. 
@@ -164,9 +163,9 @@ Iter (Updt (ttS andS a_t) y (fun st : state => st y - 1) *** (<< ttS >>)) ***
       have := skips_setoid h2 h3. by apply. have h3 := follows_hd H5. 
       rewrite -h3 => {h3}. clear h2 h0 H1 H5. have h0 := follows_hd H4 => {H4}.
       rewrite -h0 => {h0}. rewrite H0 => {H0}. rewrite /update.    
-      rewrite yx. done. 
+      rewrite yx. done.
 have h1 := semax_conseq_R h0 h2 => {h0 h2}. 
-have h0 := semax_assign ttS x (fun st => st x + 1). 
+have h0 := semax_assign ttS x incr_x. 
 have h2 := semax_conseq_R (@Append_ttS _) h1 => {h1}.
 have h1 := semax_seq h2 h0 =>  {h2 h0}.
 have h0 := semax_conseq_R (@Append_ttS _) (semax_assign ttS y (fun st => st x)).
@@ -174,7 +173,7 @@ have h2 := semax_seq h0 h1 => {h0 h1}.
 have h0 := semax_conseq_R (@Append_assoc_R _ _ _) h2 => {h2}.
 have h1: (Updt ttS y (fun st => st x) *** Skips) =>> Skips.
 * clear h0. move => tr0 [tr1 [h0 h1]]. simpl. move: h0 => [st0 [_ h0]]. 
-  foo h0. foo H1. foo h1. foo H2. apply skips_delay => //. rewrite H0. 
+  foo h0. foo H1. foo h1. foo H2. apply skips_delay => //. rewrite H0.
   rewrite /update. rewrite yx. done. 
 have h2 := semax_conseq_R (Append_monotone_L h1) h0 => {h0 h1}.
 have h0: x_is_zero ->> ttS; first done. 
@@ -186,27 +185,25 @@ have h0: (<<x_is_zero>> *** Iter ((Skips *** Updt ttS x incr_x)
 * clear h1. move => tr0 h0. simpl. simpl in h0. 
   move: h0 => [tr1 [h0 h1]]. move: h0 => [st0 [h0 h2]]. rewrite /x_is_zero in h0.
   foo h2. foo H1. foo h1. foo H2. move: H1 => [tr0 [h1 h2]].  
-  have: forall n tr0 tr1, hd tr1 x = n -> 
-  iter (append (append (fun tr => skips tr)
-  (updt ttS x (fun st => st x + 1))) (dup ttS)) tr0 -> 
-  follows (singleton (eval_false tt)) tr0 tr1 -> up n (Tcons (hd tr1) tr1).
+  have: forall n tr0 tr1, hd tr1 x = n ->
+   iter (append (append (fun tr => skips tr) (updt ttS x incr_x)) (dup ttS)) tr0 -> 
+   follows (singleton (eval_false tt)) tr0 tr1 -> up n (Tcons (hd tr1) tr1).
   * clear tr' h0 tr0 h1 h2. cofix hcoind. move => n tr0 tr1 h0 h1 h2. foo h1. 
     - foo h2. move: H1 => [st0 [h0 h1]]. rewrite /eval_false in h0. clear h1. 
       rewrite tt_true in h0. foo h0. 
     - move: H => [tr2 [h0 h1]]. move: h0 => [tr3 [h0 h3]].
       have h4: forall tr3, skips tr3 -> 
-      forall tr2, follows (updt ttS x (fun st => st x + 1)) tr3 tr2 ->
+      forall tr2, follows (updt ttS x incr_x) tr3 tr2 ->
       forall tr, follows (dup ttS) tr2 tr ->
       forall tr0, follows (iter
           (append (append (fun tr : trace => skips tr)
-           (updt ttS x (fun st : state => st x + 1))) (dup ttS))) tr tr0 ->
+           (updt ttS x incr_x)) (dup ttS))) tr tr0 ->
       forall tr1, follows (singleton (eval_false tt)) tr0 tr1 ->   
-      exists tr4 : trace,
-      ((red_hd_x (Tcons (hd tr1) tr1) (Tcons (hd tr4) tr4)) /\
+      exists tr4 : trace, ((red_hd_x (Tcons (hd tr1) tr1) (Tcons (hd tr4) tr4)) /\
         (hd tr4 x = S (hd tr1 x)) /\
         (iter (append
          (append (fun tr : trace => skips tr)
-         (updt ttS x (fun st : state => (st x + 1)%nat))) (dup ttS)) tr4) /\
+         (updt ttS x incr_x)) (dup ttS)) tr4) /\
          (follows (singleton (eval_false tt)) tr4 tr4)).
        * clear hcoind tr0 tr1 h2 tr H0 tr2 h1 tr3 h0 h3. induction 1. 
           - move => tr0 h0 tr1 h1 tr2 h2 tr3 h3. foo h0. 
@@ -218,8 +215,9 @@ have h0: (<<x_is_zero>> *** Iter ((Skips *** Updt ttS x incr_x)
             split. apply red_hd_x_tau. by simpl.
             apply red_hd_x_stop.
             simpl. rewrite /update. 
-            have h: x =? x = true by apply Nat.eqb_refl.
-            rewrite h => {h}. have ->: st0 x + 1 = S (st0 x) by lia. by auto with arith. rewrite H0.
+            have ->: x =? x = true by apply Nat.eqb_refl.
+            rewrite /incr_x.
+            have ->: st0 x + 1 = S (st0 x) by lia. by auto with arith. rewrite H0.
             apply bisim_cons. have := bisim_symmetric h1. by apply.
             simpl. rewrite H0. rewrite /update. have h: x =? x = true by apply Nat.eqb_refl.
             rewrite h => {h}.  split. by apply Sn. split.
