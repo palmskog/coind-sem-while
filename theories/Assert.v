@@ -86,6 +86,14 @@ destruct q0 as [q0 hq0]. destruct q1 as [q1 hq1].
 move => h0 h1 tr0. simpl. move => h2. apply h0. simpl. 
 apply h1. simpl. done. Qed.
 
+Lemma imp_andT: forall p q0 q1,
+p =>> q0 -> p =>> q1 -> p =>> (q0 andT q1).
+Proof. 
+move => [p hp] [q0 hq0] [q1 hq1] h0 h1 tr0 h2.
+simpl in h2. simpl. split. 
+apply h0. done. apply h1. done. 
+Qed.
+
 Inductive ttS: state -> Prop := | ttS_intro: forall st, ttS st.
 Definition ffS: assertS := fun st => False.
 
@@ -494,7 +502,17 @@ move => q p1 p2 h0. destruct p1 as [p1 hp1]. destruct p2 as [p2 hp2].
 destruct q as [q hq]. move => tr0. simpl. move => h1.   
 have := (@append_cont q q p1 p2). apply. done. apply h0. 
 exact h1.
-Qed.    
+Qed.
+
+Lemma Append_ttS: forall p,
+p =>> (p *** [| ttS |]). 
+Proof.
+move => [f hp] tr0 h0. simpl in h0. simpl. exists tr0. 
+split; first done. clear h0 hp. move: tr0. cofix hcoind. 
+case. move => st0. apply follows_nil => //.
+by apply mk_singleton_nil. move => st0 tr0. 
+have := follows_delay _ (hcoind _). by apply. 
+Qed.
 
 (* Lemma 3.4 (1), the first => *)
 Lemma Sglt_Dup_1: forall u v, ([|u|] *** <<v>>) =>> <<u andS v>>.
