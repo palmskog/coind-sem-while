@@ -10,16 +10,19 @@ Set Implicit Arguments.
 Unset Strict Implicit.
 Import Prenex Implicits.
 
-Variable x: id.
-Variable y: id.
-Axiom xy: x =? y = false.
+Variable x : id.
+Variable y : id.
+Axiom xy : x =? y = false.
 Variable cond : expr. (* y <> 0 *)
-Axiom cond_true: forall st, eval_true cond st -> (st y = 0 -> False).
+Axiom cond_true: forall st, eval_true cond st -> (st y <> 0).
 Variable tt : expr.
 Axiom tt_true: forall st, is_true (tt st) = true.
 
 Lemma yx : y =? x = false.
 Proof. by rewrite Nat.eqb_sym; apply xy. Qed.
+
+Definition incr_x: expr := (fun st => st x + 1).
+Definition decr_y: expr := (fun st => st y - 1).
 
 Inductive red_hd_x : trace -> trace -> Prop :=
 | red_hd_x_stop: forall st tr tr',
@@ -99,29 +102,36 @@ move => tr0 h0 tr1 h1. simpl.
 have := skips_setoid h0 h1. by apply. 
 Defined.
 
-Definition s := 
-Swhile tt 
-(y <- (fun st => st x);; 
- Swhile cond (y <- (fun st => st y - 1));;
- x <- (fun st => (st x) + 1)).
-
-Definition u0: assertS := fun st => st x = 0.
-
 Lemma Sn_1 : forall n, S n - 1 = n. 
 Proof. by move => n; lia. Qed.  
 
 Lemma Sn: forall n, n + 1 = S n. 
 Proof. by move => n; lia. Qed.
 
+Definition x_is_zero : assertS := fun st => st x = 0.
+
+(*
+while true
+ (y := x;
+  while y != x (y := y - 1);
+  x := x + 1)
+*)
+
+Definition s : stmt :=
+Swhile tt
+(y <- (fun st => st x);;
+ Swhile cond (y <- decr_y);;
+ x <- incr_x).
+
 (* Proposition 5.3 *)
-Lemma spec: semax u0 s (Up 0).
+Lemma spec: semax x_is_zero s (Up 0).
 Proof. 
 rewrite /s. 
 pose a_t := eval_true cond.
 pose a_f := eval_false cond. 
 pose u_xy := fun st: state => st x = st y.      
 have h0 := semax_assign (ttS andS a_t) y (fun st => st y - 1).
-have h1 := semax_conseq_R (@Append_ttS _) h0 => {h0}.  
+have h1 := semax_conseq_R (@Append_ttS _) h0 => {h0}.
 have h0: ttS ->> ttS; first done.
 have h2 := semax_while h0 h1 => {h0 h1}. 
 have h0: ((<< ttS >>) ***
@@ -167,14 +177,14 @@ have h1: (Updt ttS y (fun st => st x) *** Skips) =>> Skips.
   foo h0. foo H1. foo h1. foo H2. apply skips_delay => //. rewrite H0. 
   rewrite /update. rewrite yx. done. 
 have h2 := semax_conseq_R (Append_monotone_L h1) h0 => {h0 h1}.
-have h0: u0 ->> ttS; first done. 
+have h0: x_is_zero ->> ttS; first done. 
 have h1: (ttS andS eval_true tt) ->> ttS; first done.
 have h3 := semax_conseq h1 (@Append_ttS _) h2 => {h2 h1}.  
 have h1 := semax_while h0 h3 => {h0 h3}.       
-have h0: (<<u0>> *** Iter ((Skips *** Updt ttS x (fun st => st x + 1))
+have h0: (<<x_is_zero>> *** Iter ((Skips *** Updt ttS x incr_x)
 *** <<ttS>>) *** [| eval_false tt |]) =>> (Up 0). 
 * clear h1. move => tr0 h0. simpl. simpl in h0. 
-  move: h0 => [tr1 [h0 h1]]. move: h0 => [st0 [h0 h2]]. rewrite /u0 in h0.
+  move: h0 => [tr1 [h0 h1]]. move: h0 => [st0 [h0 h2]]. rewrite /x_is_zero in h0.
   foo h2. foo H1. foo h1. foo H2. move: H1 => [tr0 [h1 h2]].  
   have: forall n tr0 tr1, hd tr1 x = n -> 
   iter (append (append (fun tr => skips tr)

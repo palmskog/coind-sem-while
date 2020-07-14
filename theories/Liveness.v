@@ -13,10 +13,6 @@ Variable x : id.
 Variable tt : expr.
 Axiom tt_true: forall st, is_true (tt st) = true.
 
-(*
-x := 0; while true (x := x + 1)
-*)
-
 Definition incr_x: expr := (fun st => st x + 1).
 
 Lemma update_x_incr_x: forall st,
@@ -45,32 +41,41 @@ exists (eventually_x_is_n n).
 move => tr0 h0 tr1 h1. exact: (eventually_x_is_n_setoid h0 h1).
 Defined.
 
+(*
+x := 0; while true (x := x + 1)
+*)
+
+Definition s : stmt :=
+  x <- (fun _ => 0);;
+  Swhile tt (x <- incr_x).
+
+Definition x_is_zero : assertS := fun st => st x = 0.
+
 (* Proposition 5.2 *)
-Lemma prg_spec: forall (n:nat), 
-semax ttS (x <- (fun _ => 0) ;; Swhile tt (x <- incr_x)) (Eventually_x_is_n n). 
+Lemma prg_spec: forall (n:nat), semax ttS s (Eventually_x_is_n n).
 Proof. 
-move => n. 
-have hs0: semax ttS (x <- (fun _ => 0)) 
-(Updt ttS x (fun _ => 0) *** [| fun st => st x = 0 |]).
-* have := semax_conseq_R _ (semax_assign _ _ _). apply. 
-  move => tr. simpl. move => h0. exists tr. split => //. 
+move => n.
+have hs0: semax ttS (x <- (fun _ => 0))
+(Updt ttS x (fun _ => 0) *** [| x_is_zero |]).
+* have := semax_conseq_R _ (semax_assign _ _ _). apply.
+  move => tr. simpl. move => h0. exists tr. split => //.
   foo h0. destruct H as [_ h0]. foo h0. foo H1.
   apply follows_delay. apply follows_nil => //. 
   exists (update x 0 x0). split => //. rewrite /update.
   have h: x =? x = true by apply Nat.eqb_refl.
-  by rewrite h. by apply bisim_reflexive.     
-have hs1: semax (fun st => st x = 0) (Swhile tt (x <- incr_x)) (Eventually_x_is_n n).
+  by rewrite /x_is_zero h. by apply bisim_reflexive.
+have hs1: semax x_is_zero (Swhile tt (x <- incr_x)) (Eventually_x_is_n n).
 have h0 := semax_assign ttS x incr_x.
-have h1 : (ttS andS eval_true tt) ->> ttS; first done.   
+have h1 : (ttS andS eval_true tt) ->> ttS; first done.
 have h2 : (Updt ttS x incr_x) =>> (Updt ttS x incr_x) *** [| ttS |]. 
 * clear h0 h1. move => tr0 h0. exists tr0. split => //. clear h0. 
   move: tr0. cofix hcoind. case. move => st0. apply follows_nil => //. 
   have := mk_singleton_nil. apply. done. move => st0 tr0. 
   have := follows_delay _ (hcoind tr0). apply. 
 have h3 := semax_conseq h1 h2 h0 => {h0 h1 h2}.
-have h0: (fun st => st x = 0) ->> ttS by [].
+have h0: x_is_zero ->> ttS by [].
 have h1 := semax_while h0 h3 => {h0 h3}.
-have h0 : ((<< fun st => st x = 0 >>) ***
+have h0 : ((<< x_is_zero >>) ***
  Iter (Updt ttS x incr_x *** (<< ttS >>)) *** ([|eval_false tt|])) =>>
  (Eventually_x_is_n n).
 * clear h1. move => tr0 h0. move: h0 => [tr1 [h0 h1]]. move: h0 => [st0 [h0 h2]]. 

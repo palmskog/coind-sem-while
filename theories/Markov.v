@@ -53,8 +53,8 @@ follows (singleton (fun st => B (st x))) tr tr.
 apply. apply h0. 
 Qed.
 
-(* Lemma 5.1: cofinally 0 is stronger than nondivergent. *)
-Lemma Cofinally_B_negInfinite: Cofinally_B 0 =>>  negT Infinite.
+(* Lemma 5.1: cofinally_B 0 is stronger than nondivergent. *)
+Lemma Cofinally_B_negInfinite: Cofinally_B 0 =>> negT Infinite.
 Proof.
 move => tr0 h0 h1. simpl in h0. 
 have h2: forall n, exists tr : trace, (cofinally_B n tr) /\ (infinite tr).
@@ -74,13 +74,20 @@ n + 1 = S n.
 Proof. by move => n; lia. Qed.
 
 Definition x_is_zero : assertS := fun st => st x = 0.
+Definition B_holds_for_x : assertS := fun st => B (st x).
 
 Definition incr_x : expr := fun st => st x + 1.
 
+(*
+x := 0; while cond (x := x + 1)
+*)
+
+Definition s : stmt :=
+  x <- (fun _ => 0);; Swhile cond (x <- incr_x).
+
 (* Proposition 5.1 *)
-Lemma Markov_search:
-semax ttS (x <- (fun _ => 0) ;; Swhile cond (x <- incr_x)) 
-((ttT *** [|fun st => B (st x)|]) andT negT Infinite).
+Lemma Markov_search :
+ semax ttS s ((ttT *** [|B_holds_for_x|]) andT negT Infinite).
 Proof.
 have hs0: semax ttS (x <- (fun _ => 0)) 
 ((Updt ttS x (fun _ => 0)) *** [| x_is_zero |]).
@@ -91,9 +98,9 @@ have hs0: semax ttS (x <- (fun _ => 0))
   exists (update x 0 x0). split => //. rewrite /update.
   have h: x =? x = true by apply Nat.eqb_refl.
   by rewrite /x_is_zero h. by apply bisim_reflexive.
-have hs1: semax (x_is_zero)  (Swhile cond (x <- (fun st => (st x) + 1))) 
-((ttT *** [|fun st => B (st x)|]) andT negT Infinite).
-pose u1 := ttS andS eval_true cond. 
+have hs1: semax (x_is_zero)  (Swhile cond (x <- incr_x)) 
+ ((ttT *** [|B_holds_for_x|]) andT negT Infinite).
+pose u1 := ttS andS eval_true cond.
 have h0 := semax_assign u1 x incr_x.
 have h1 : (Updt u1 x incr_x) =>> ((Updt u1 x incr_x)  *** [|ttS|]).
 * clear h0. move => tr0 h0. exists tr0. split; first done. 
@@ -113,7 +120,7 @@ have h0 :
   hd tr = st -> 
   append (iter (append (updt u1 x incr_x) (dup ttS)))
   (singleton (eval_false cond)) tr ->
-  cofinally_B n (Tcons st tr). 
+  cofinally_B n (Tcons st tr).
   * cofix hcoind. clear H1 h0. move => n st0 tr0 h h0 [tr1 [h1 h2]]. foo h1. 
     - foo h2. move: H1 => [st0 [h0 h1]]. foo h1. simpl. 
       apply cofinally_B_nil. done. have := cond_false h0; apply. 
@@ -133,7 +140,7 @@ have h0 :
       have := cofinally_B_delay (hcoind _ _ _ h2 h1 h3) => {h1 h2 h3}.
       apply. done. move: h0 => [_ h0]. have := cond_true h0. apply.
       have := h1 _ _ _ _ _ H1 => {h1 H1}. apply.
-      rewrite /x_is_zero in h0. done. done. 
+      rewrite /x_is_zero in h0. done. done.
 have h2 := semax_conseq_R h0 h1 => {h0 h1}.
 have h0 := imp_andT Cofinally_B_correct Cofinally_B_negInfinite. 
 have := semax_conseq_R h0 h2 => {h2 h0}. apply.
