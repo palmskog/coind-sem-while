@@ -4,7 +4,7 @@ Set Implicit Arguments.
 Unset Strict Implicit.
 Import Prenex Implicits.
 
-Inductive semax: assertS -> stmt -> assertT -> Prop :=
+Inductive semax : assertS -> stmt -> assertT -> Prop :=
 
 | semax_skip: forall u, semax u Sskip ([|u|])
 

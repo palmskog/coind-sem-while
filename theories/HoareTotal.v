@@ -12,15 +12,15 @@ fun st => exists st0 : state, (u st0) /\ ((update x (a st0) st0) = st).
 
 Inductive tsemax2: assertS -> stmt -> assertS -> Prop :=
 
-| tsemax2_skip: forall u, tsemax2 u Sskip u 
+| tsemax2_skip: forall u, tsemax2 u Sskip u
 
 | tsemax2_assign: forall u x a, 
-  tsemax2 u (Sassign x a) (udt u x a) 
+  tsemax2 u (Sassign x a) (udt u x a)
 
 | tsemax2_seq: forall s1 s2 u1 u2 u3,
   tsemax2 u1 s1 u2->
   tsemax2 u2 s2 u3 ->
-  tsemax2 u1 (Sseq s1 s2)  u3
+  tsemax2 u1 (Sseq s1 s2) u3
 
 | tsemax2_ifthenelse: forall a s1 s2 u1 u2,
   tsemax2 (u1 andS eval_true a) s1 u2 ->
@@ -51,12 +51,13 @@ Qed.
 
 Lemma tsemax2_conseq_R: forall s u v1 v2,
 v2 ->> v1 -> tsemax2 u s v2 -> tsemax2 u s v1.
-Proof. 
+Proof.
 move => s u v1 v2 h0 h1. have := tsemax2_conseq (@assertS_imp_refl _) h0 h1; apply.
 Qed.
 
 Lemma tsemax2_false: forall s u, tsemax2 ffS s u. 
-Proof. move => s. induction s. 
+Proof.
+move => s. induction s. 
 - move => u. have hs := tsemax2_skip ffS. have := tsemax2_conseq_R _ hs. 
   apply. done. 
 - move => u. have hs := tsemax2_assign ffS. have := tsemax2_conseq_R _ (hs _ _) => {hs}.
@@ -110,18 +111,10 @@ Lemma Len_monotone: forall n p q, q =>> p -> (Len p n) ->> (Len q n).
 Proof. move => n p q hpq st0. rewrite /Len. move => hp tr0 [h0 h1]. 
 apply hp. split => //. have := hpq _ h1. done. Qed. 
 
-Lemma Len_monotone2: forall p n m, n <= m -> Len p n ->> Len p m. 
+Lemma Len_monotone2: forall p n m, n <= m -> Len p n ->> Len p m.
 Proof. move => p n m hnm st0 h0 tr0 [h1 h2].
 have : len n tr0. apply h0 => //. clear h0 h1 h2. move => h0.
-have := len_monotone hnm h0. done. Qed.
-
-(* Same as semax_total from SemaxSound.v. *)
-Lemma semax_post: forall u s p, semax u s p -> forall st, u st -> exists tr : trace, (hd tr = st) /\ (satisfy p tr).
-Proof.
-move => U S P hsemax s hU.
-exists (Exec S s). split.
-- by apply Exec_hd.
-- apply (semax_sound hsemax (Exec_correct_exec _ _) hU). 
+have := len_monotone hnm h0. done.
 Qed.
 
 Definition after (p: assertT) (q: assertT) := 
@@ -135,13 +128,13 @@ Proof. move => [p0 hp0] [p1 hp1] [q hq]. move => h0 h1 tr1 h2.
 have := h0 _ h2. simpl. clear h2. move => h2. have := h1 _ h2.
 done. Qed.
 
-Definition invert_fin_delay
- (tr : trace) (st st0 : state) (h : fin (Tcons st tr) st0) : fin tr st0.
+Definition invert_fin_delay (tr : trace) (st st0 : state)
+ (h : fin (Tcons st tr) st0) : fin tr st0.
 Proof.
-  by dependent destruction h.
+by depelim h.
 Defined.
 
-Fixpoint cut (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace) { struct h }: trace :=
+Fixpoint cut (tr0 : trace) (st0 : state) (h : fin tr0 st0) (tr1 : trace) { struct h }: trace :=
 match tr0 as tr0' return (fin tr0' st0 -> trace) with
 | Tnil _ => fun _ => tr1
 | Tcons st tr => fun h' =>
@@ -152,8 +145,8 @@ match tr0 as tr0' return (fin tr0' st0 -> trace) with
 end h.
 
 Lemma tsemax2_complete_aux: forall (p q : trace -> Prop) tr0 st0 (h:fin tr0 st0), 
-forall tr1 tr2, hd tr1 = st0 -> follows q (tr0 +++ tr1) tr2 ->   
-p tr1 -> append p q (cut h tr2). 
+ forall tr1 tr2, hd tr1 = st0 -> follows q (tr0 +++ tr1) tr2 ->   
+ p tr1 -> append p q (cut h tr2).
 Proof.
 move => p q.
 refine (fix IH tr st h {struct h} := _).
@@ -181,10 +174,10 @@ case: tr st h.
   by apply: (IH  _ _ _ _ _ H2).
 Qed.
 
-Lemma tsemax2_complete_aux3: forall u0 w u p st0, 
-u0 ->> u ->
-Last (<< u0 andS w >> *** Iter (p *** << u >>)) st0 -> u st0. 
-Proof. move => u0 w u p st0 a0 h2. 
+Lemma tsemax2_complete_aux3: forall u0 w u p st0, u0 ->> u ->
+ Last (<< u0 andS w >> *** Iter (p *** << u >>)) st0 -> u st0.
+Proof.
+move => u0 w u p st0 a0 h2.
 have : Last ((<< u >>) *** Iter (ttT *** (<< u >>))) st0. 
 * have := Last_monotone _ h2. apply. apply Append_monotone. 
   move => tr0 [st1 [h4 h5]]. simpl. foo h5. foo H1. destruct h4 as [h4 h5]. 
@@ -195,8 +188,9 @@ Qed.
 
 (* Lemma 4.3: (P ** Q) ◃ R ⊧ (<Last P> ** Q) ◃ R *)
 Lemma after_Append: forall p q r, after (p *** q) r -> after ([|Last p|] *** q) r.   
-Proof. move => [p hp] [q hq] [r hr]. simpl. move => h0 tr0 [tr1 [h1 h2]]. 
-destruct h1 as [st0 [h1 h3]]. foo h3. foo h2. destruct h1 as [tr1 [h1 h2]].  
+Proof.
+move => [p hp] [q hq] [r hr]. simpl. move => h0 tr0 [tr1 [h1 h2]].
+destruct h1 as [st0 [h1 h3]]. foo h3. foo h2. destruct h1 as [tr1 [h1 h2]].
 have h3: (p *+* q) (tr1 +++ tr0).
 * exists tr1; split => //. clear h1. move: tr0 tr1 H1 h2. cofix hcoind. 
   move => tr0. case. 
@@ -291,7 +285,7 @@ Proof. induction 1.
       apply after_Last.
       have := after_monotone_L (Singleton_monotone (@Last_chop_sglt _ _)).
       apply. destruct p2 as [p2 hp2]. simpl. move => tr0 [st0 [h0 h1]]. 
-      foo h1. have := semax_post H0 h0 => {h0}. move =>[tr0 [h0 h1]].
+      foo h1. have := semax_total H0 h0 => {h0}. move =>[tr0 [h0 h1]].
       simpl in h1. exists tr0. apply follows_nil => //. 
     destruct p1 as [p1 hp1]. destruct p2 as [p2 hp2]. destruct r as [r hr].
     simpl. simpl in hafter. simpl in h. move => tr0 h0. 
@@ -416,7 +410,7 @@ Proof. induction 1.
        - foo h4. foo H2. foo h6. foo h3.  
 
     have hsemax := semax_while (@assertS_imp_refl _) H0 => {H0}.
-    have h0 := semax_post hsemax => {hsemax}.  
+    have h0 := semax_total hsemax => {hsemax}.
     have hu : u st0. have := tsemax2_complete_aux3 H h2. done. 
     have := h0 _ hu => {h0}. move => [tr0 [h0 h4]].
 
@@ -551,10 +545,10 @@ Proof. induction 1.
       have := after_monotone_L (Singleton_monotone (@Last_chop_sglt _ _)).
       apply. clear hafter.     
       have hsemax := semax_while (@assertS_imp_refl _) H0 => {H0}.
-      have h0 := semax_post hsemax => {hsemax}.
+      have h0 := semax_total hsemax => {hsemax}.
       destruct p as [p hp]. simpl. move => tr0 [st0 [h1 h2]]. foo h2. 
       have := h0 _ h1 => {h0 h1}. move => [tr0 [h0 h1]]. simpl in h1. 
-      exists tr0. apply follows_nil => //. 
+      exists tr0. apply follows_nil => //.
   
   (** end of h0 **)
 
@@ -675,12 +669,12 @@ Qed.
 
 (* Corollary 4.3 *)
 Lemma tsemax2_complete_main: forall u s p, semax u s p ->
-tsemax2 (u andS (exS (fun m => Len p m))) s (Last p). 
+ tsemax2 (u andS (exS (fun m => Len p m))) s (Last p).
 Proof.
 move => U s P hsemax. 
 have h0: (U andS exS (fun m => Len P m)) ->> (exS (fun m => U andS Len P m)). 
 - move => st0 [h0 [n h1]]. exists n. by split.
-have h1: (exS (fun (m:nat) => Last P)) ->> (Last P). 
+have h1: (exS (fun (m:nat) => Last P)) ->> (Last P).
 - move => st0 [n hP]. done. 
 have := tsemax2_conseq h0 h1 => {h0 h1}. apply. 
 apply tsemax2_ex. move => n. have := (@tsemax2_complete _ _ _ hsemax  n ttS ([| ttS |])). 
@@ -697,8 +691,8 @@ have := (tsemax2_conseq _ _ hsemax) => {hsemax}. apply.
   apply. move => tr0 [tr1 [h1 h2]]. destruct h1 as [st1 [_ h1]]. 
   inversion h1; subst; clear h1. inversion h2; subst; clear h2. done. 
 Qed.
-           
-Inductive tsemax: assertS -> stmt -> assertS -> Prop :=
+
+Inductive tsemax : assertS -> stmt -> assertS -> Prop :=
 
 | tsemax_skip: forall u, tsemax u Sskip u 
 
@@ -727,30 +721,24 @@ Inductive tsemax: assertS -> stmt -> assertS -> Prop :=
   tsemax u1 s v1.
 
 Lemma tsemax_conseq_L: forall s u1 u2 v,
-u1 ->> u2 -> tsemax u2 s v -> tsemax u1 s v.
-Proof. 
-move => s u1 u2 v h0 h1. 
-have := tsemax_conseq h0 (@assertS_imp_refl _) h1. apply.
+ u1 ->> u2 -> tsemax u2 s v -> tsemax u1 s v.
+Proof.
+move => s u1 u2 v h0 h1.
+exact: (tsemax_conseq h0 (@assertS_imp_refl _) h1).
 Qed.
 
 Lemma tsemax_conseq_R: forall s u v1 v2,
-v2 ->> v1 -> tsemax u s v2 -> tsemax u s v1.
+ v2 ->> v1 -> tsemax u s v2 -> tsemax u s v1.
 Proof. 
-move => s u v1 v2 h0 h1. have := tsemax_conseq (@assertS_imp_refl _) h0 h1; apply.
-Qed.
-
-Lemma nat_nonneg: forall n: nat,
-n < 0 -> False.
-Proof.
-move => n h0. foo h0.
+move => s u v1 v2 h0 h1.
+exact: (tsemax_conseq (@assertS_imp_refl _) h0 h1).
 Qed.
 
 (* Proposition 4.2: embedding the total-correctness Hoare logic into
    the trace-based Hoare logic. *)
-Lemma tsemax_correct_semax: forall u s v,
-tsemax u s v -> forall u0, 
-semax (u andS u0) s ([|u0|] *** Finite *** [|v|]).
-Proof. 
+Lemma tsemax_correct_semax: forall u s v, tsemax u s v ->
+ forall u0, semax (u andS u0) s ([|u0|] *** Finite *** [|v|]).
+Proof.
 induction 1. 
 - move => u0. have h0 := semax_skip (u andS u0). 
   have h1: [|u andS u0 |] =>> ([|u0|] *** Finite *** [|u|]).
@@ -876,7 +864,7 @@ induction 1.
       move: h1 => [tr3 [h1 h4]].
       move: tr3 h1 tr0 tr1 tr2 h2 h3 h4. induction 1.
       - move => tr0 tr1 tr2 h0 h1 h2. foo h2. move: H1 => [st0 [h3 h4]].
-        absurd False. done. have := nat_nonneg h3; apply.   
+        absurd False. done. by inversion h3.
       - move => tr0 tr1 tr2 h0 h2 h3. foo h3. foo h0. 
         foo h2. apply finite_delay.
         have := IHh1 _ _ _ H3 H4 H2. by apply. 
@@ -907,10 +895,10 @@ induction 1.
 Qed.
 
 (* Corollary 4.1 *)
-Lemma tsemax_correct_for_semax: forall s U Z, tsemax U s Z ->
-semax U s (Finite *** [| Z |]).
+Lemma tsemax_correct_for_semax: forall s U V, tsemax U s V ->
+ semax U s (Finite *** [| V |]).
 Proof.
-move => s U Z htsemax.
+move => s U V htsemax.
 have := (tsemax_correct_semax htsemax ttS) => {htsemax}. move => htsemax. 
 have := semax_conseq _ _  htsemax. apply. 
 - move => st0 hU; split; [auto | apply ttS_intro]. 
@@ -919,4 +907,4 @@ have := semax_conseq _ _  htsemax. apply.
   destruct h0 as [st0 [h0 h2]]. inversion h1; subst; clear h1. 
   * inversion h2; subst; clear h2. auto. 
   * inversion h2. 
-Qed.               
+Qed.

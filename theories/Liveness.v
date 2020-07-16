@@ -10,6 +10,7 @@ Variable tt : expr.
 Axiom tt_true : forall st, is_true (tt st) = true.
 
 Definition incr_x : expr := fun st => st x + 1.
+Definition x_is_zero : assertS := fun st => st x = 0.
 
 Lemma update_x_incr_x : forall st,
  update x (incr_x st) st x = st x + 1.
@@ -37,12 +38,9 @@ exists (eventually_x_is_n n).
 move => tr0 h0 tr1 h1. exact: (eventually_x_is_n_setoid h0 h1).
 Defined.
 
-Definition x_is_zero : assertS := fun st => st x = 0.
-
 (*
 x := 0; while true (x := x + 1)
 *)
-
 Definition s : stmt := x <- (fun _ => 0);; Swhile tt (x <- incr_x).
 
 (* Proposition 5.2 *)

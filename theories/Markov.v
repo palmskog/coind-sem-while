@@ -12,6 +12,10 @@ Variable cond : expr.
 Axiom cond_true : forall st, eval_true cond st -> (B (st x) -> False).
 Axiom cond_false : forall st, eval_false cond st -> (B (st x)).
 
+Definition x_is_zero : assertS := fun st => st x = 0.
+Definition B_holds_for_x : assertS := fun st => B (st x).
+Definition incr_x : expr := fun st => st x + 1.
+
 CoInductive cofinally_B : nat -> trace -> Prop :=
 | cofinally_B_nil: forall n st,
   st x = n -> B n -> cofinally_B n (Tcons st (Tnil st))
@@ -36,11 +40,11 @@ Defined.
 
 (* Lemma 5.2 *)
 Lemma Cofinally_B_correct: 
-Cofinally_B 0 =>> (ttT *** [| fun st => B (st x) |]).
+Cofinally_B 0 =>> (ttT *** [|B_holds_for_x|]).
 Proof. 
 move => tr0 h0. simpl in h0. simpl. exists tr0. split; first done. 
 have: forall n tr, cofinally_B n tr -> 
-follows (singleton (fun st => B (st x))) tr tr. 
+follows (singleton B_holds_for_x) tr tr. 
 * clear h0. cofix hcoind. move => n tr h0. foo h0. 
   - apply follows_delay. apply follows_nil => //. exists st. 
     by split; [done | apply bisim_reflexive].
@@ -65,18 +69,12 @@ apply B_noncontradictory. move => n. induction n.
   foo H2. have := H1 h3. apply. 
 Qed.
 
-Lemma plus_S: forall n,
-n + 1 = S n. 
+Lemma plus_S: forall n, n + 1 = S n.
 Proof. by move => n; lia. Qed.
 
-Definition x_is_zero : assertS := fun st => st x = 0.
-Definition B_holds_for_x : assertS := fun st => B (st x).
-Definition incr_x : expr := fun st => st x + 1.
-
 (*
-x := 0; while !(B x) (x := x + 1)
+ x := 0; while !(B x) (x := x + 1) 
 *)
-
 Definition s : stmt := x <- (fun _ => 0);; Swhile cond (x <- incr_x).
 
 (* Proposition 5.1 *)

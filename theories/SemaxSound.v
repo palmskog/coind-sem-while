@@ -5,8 +5,8 @@ Unset Strict Implicit.
 Import Prenex Implicits.
 
 (* Proposition 3.3: Soundness *)
-Lemma semax_sound: forall u s p,
-semax u s p -> forall st tr, exec s st tr -> u st -> satisfy p tr.
+Lemma semax_sound : forall u s p, semax u s p ->
+ forall st tr, exec s st tr -> u st -> satisfy p tr.
 Proof.
 induction 1 => st0 tr0 hexec hu. 
 - exists st0. foo hexec. by split; [done | reflexivity].  
@@ -90,14 +90,13 @@ induction 1 => st0 tr0 hexec hu.
 - have := H0 _ (IHsemax _ _ hexec (H _ hu)). apply. 
 - move: hu => [x h0]. exists x.
   have := H0 _ _ _ hexec h0. apply. 
-Qed.       
+Qed.
 
 (* Corollary 3.1 *)
-Lemma semax_total: forall S U P, 
-semax U S P -> forall s, U s -> exists tr,  hd tr = s /\ satisfy P tr. 
+Lemma semax_total : forall S U P, semax U S P ->
+ forall s, U s -> exists tr, hd tr = s /\ satisfy P tr.
 Proof.
 move => S U P hsemax s hU. 
-exists (Exec S s). split.
-- by apply Exec_hd.
-- apply (semax_sound hsemax (Exec_correct_exec _ _) hU). 
+exists (Exec S s). split; first by apply Exec_hd.
+exact: (semax_sound hsemax (Exec_correct_exec _ _) hU).
 Qed.

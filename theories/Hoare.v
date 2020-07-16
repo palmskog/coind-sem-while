@@ -7,7 +7,7 @@ Import Prenex Implicits.
 Definition udt (u: assertS) (x: id) (a: expr): assertS :=
 fun st => exists st0 : state, (u st0) /\ (update x (a st0) st0 = st).
 
-Inductive hsemax: assertS -> stmt -> assertS -> Prop :=
+Inductive hsemax : assertS -> stmt -> assertS -> Prop :=
 
 | hsemax_skip: forall u,   hsemax u Sskip u 
 

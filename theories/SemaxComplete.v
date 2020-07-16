@@ -6,8 +6,8 @@ Import Prenex Implicits.
 
 (* Lemma 3.3 *)
 Lemma conv_follows: forall (u:assertS) tr,
-(forall st, fin tr st -> u st) ->
-follows (singleton u) tr tr.
+ (forall st, fin tr st -> u st) ->
+ follows (singleton u) tr tr.
 Proof. 
 move => u. cofix COINDHYP. case. 
 - move => st0 h0. have h1 := h0 st0 (fin_nil st0) => {h0}.
@@ -19,8 +19,8 @@ move => u. cofix COINDHYP. case.
   have := follows_delay st0 (COINDHYP _ h1); apply. 
 Qed. 
 
-Lemma last_adequate: forall (p: trace -> Prop) tr, p tr -> 
-(append p (singleton (last p))) tr. 
+Lemma last_adequate: forall (p: trace -> Prop) tr, p tr ->
+ (append p (singleton (last p))) tr.
 Proof. 
 move => p tr0 h1. simpl in h1. simpl. exists tr0. 
 split => //. apply conv_follows. 
@@ -28,12 +28,11 @@ move => st0 h2. exists tr0.  simpl. by split.
 Qed.
 
 Lemma Last_adequate: forall (p: assertT),
-p =>> (p *** [| Last p |]). 
+ p =>> (p *** [| Last p |]).
 Proof. 
 move => p tr0 h0. destruct p as [f hf].  simpl. simpl in h0. 
 have := last_adequate h0. apply. 
-Qed. 
-
+Qed.
 
 Inductive loopinv (a: expr) (sp: assertS -> trace -> Prop) (u:assertS) : assertS :=
 | loopinv_here: forall  st, 
@@ -47,7 +46,6 @@ Inductive loopinv (a: expr) (sp: assertS -> trace -> Prop) (u:assertS) : assertS
   sp v tr ->
   fin tr st' ->
   loopinv a sp u st'.
-
 
 Fixpoint sp (s: stmt) (u: assertS) {struct s} : trace -> Prop :=
 match s with
@@ -66,15 +64,13 @@ match s with
    (singleton (eval_false a)))
 end.
 
-Lemma loopinv_init: forall u e sp,
-u ->> loopinv e sp u.
+Lemma loopinv_init: forall u e sp, u ->> loopinv e sp u.
 Proof. 
 move => u a sp0 st h1. by apply: loopinv_here h1. 
 Qed.   
 
 (* Lemma 3.8 *)
-Lemma sp_hd: forall s u tr,
-sp s u tr -> u (hd tr).
+Lemma sp_hd: forall s u tr, sp s u tr -> u (hd tr).
 Proof. 
 move => s; induction s; simpl => u tr.
 - move => [st [h1 h2]]. subst. foo h2. simpl. by apply h1. 
@@ -101,7 +97,7 @@ Qed.
  
 (* Lemma 3.7: sp is monotone. *)
 Lemma sp_cont: forall s u u',
-u ->> u' -> forall tr, sp s u tr -> sp s u' tr.
+ u ->> u' -> forall tr, sp s u tr -> sp s u' tr.
 Proof.
 move => s; induction s; simpl  => u0 u1 h1 tr0 h2; simpl.
 - move: h2 => [st1 [h2 h3]]. foo h3. exists st1. split. 
@@ -198,7 +194,6 @@ move => s; induction s; simpl.
       have := execseq_cons (hd tr2) (h _ _ _ _ h2 H0 h1). apply. 
 Qed. 
 
-
 (* Lemma 3.6: sp is setoid. *)
 Lemma sp_setoid: forall s u tr tr',
 sp s u tr -> bisim tr tr' -> sp s u tr'.
@@ -254,15 +249,13 @@ Proof. move => a s u tr0 [tr1 [h0 h1]].
 have := follows_singleton h1 => {h1}. move => h1. 
 have := sp_setoid h0 h1. done. Qed.   
 
-
 Definition Sp (s: stmt) (u: assertS): assertT. 
 exists (sp s u). 
 move => tr0 h0 tr1 h1. have := sp_setoid h0 h1. apply. 
-Defined.    
+Defined.
 
 (* Lemma 3.10: sp is a postcondition w.r.t. the Hoare logic. *)
-Lemma sp_deducible: forall s u,
-semax u s (Sp s u). 
+Lemma sp_deducible: forall s u, semax u s (Sp s u).
 Proof. 
 move => s; induction s => u.     
 - have h0: ([|u|]) =>> (Sp Sskip u).
@@ -301,8 +294,9 @@ move => s; induction s => u.
      apply h0. 
   have h3 := semax_conseq_R h2 h0 => {h2 h0}.
   have h0 := semax_while h1 h3 => {h1 h3}. 
-  have h1: (<<u>> *** Iter (Sp s (loopinv e (sp s) u andS eval_true e) *** << loopinv e (sp s) u>>) *** [| eval_false e|])
-  =>> (Sp (Swhile e s) u). 
+  have h1: (<<u>> *** Iter (Sp s (loopinv e (sp s) u andS eval_true e) ***
+  << loopinv e (sp s) u>>) *** [| eval_false e|]) =>>
+   (Sp (Swhile e s) u).
   * clear h0. move => tr0 h0. simpl. apply h0. 
   have := semax_conseq_R h1 h0. apply. 
 Qed. 
@@ -319,9 +313,9 @@ Qed.
 
 (* Proposition 3.4: Completeness *)
 Lemma sp_complete: forall s (u: assertS) (p: assertT),
-(forall st tr, exec s st tr -> u st -> satisfy p tr) ->
-semax u s p. 
-Proof. 
+ (forall st tr, exec s st tr -> u st -> satisfy p tr) ->
+ semax u s p.
+Proof.
 move => s u p h1. 
 have h2 := sp_deducible s u. have h3 := sp_correct h1. 
 have := semax_conseq_R _ h2; apply.
