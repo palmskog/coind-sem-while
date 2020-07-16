@@ -12,10 +12,11 @@ theories/SmallFunct.v
 theories/Alternatives.v
 theories/Assert.v
 theories/AssertClassical.v
-theories/Hoare.v
 theories/Semax.v
 theories/SemaxSound.v
 theories/SemaxComplete.v
+theories/Hoare.v
+theories/HoareTotal.v
 theories/Weakbism.v
 theories/Liveness.v
 theories/Markov.v
