@@ -205,37 +205,27 @@ induction 1.
   have := IHh2 _ _ _ H2. apply => //. 
 Qed.
 
-(*
-Program CoFixpoint f (q : trace -> Type) (tr: trace) 
-(g: forall st, fin tr st -> {tr1: trace & {h : q tr1 & hd tr1 = st}})
-: trace := match tr with
- Tnil st => let: existT tr1 _ := g st _ in tr1
- Tcons st tr' => Tcons st (@f q tr' _)
-end.
-Obligation 1. apply fin_nil. Defined. 
-Obligation 2. have := g _ (fin_delay st H). move => [tr  h]. by exists tr. Defined.
-*)
- 
-CoFixpoint f (q : trace -> Prop) (tr: trace) 
-(g: forall st, fin tr st -> {tr1: trace | q tr1 /\ hd tr1 = st})
-  : trace.
-refine
-  (match tr as tr' return (tr' = tr -> trace) with
-  | Tnil st => fun h => _
-  | Tcons st tr' => fun h => _
-  end eq_refl).
-- have Hfin: fin tr st by rewrite -h; apply fin_nil.
-  case (g st Hfin) => [tr1 H].
-  apply tr1.
-- refine (Tcons st (@f q tr' _)).
-  move => st0 Hst0.
-  have Hfin: fin tr st0 by rewrite -h; apply fin_delay.
-  apply (g _ Hfin).
+Lemma Tnil_fin tr st (h : Tnil st = tr) : fin tr st.
+Proof.
+by rewrite -h; apply fin_nil.
 Defined.
+
+Lemma Tcons_fin tr tr' st st' (h : Tcons st tr' = tr) (h': fin tr' st') : fin tr st'.
+Proof.
+by rewrite -h; apply fin_delay.
+Defined.
+ 
+CoFixpoint f (q : trace -> Prop) (tr: trace)
+  (g: forall st, fin tr st -> {tr1: trace | q tr1 /\ hd tr1 = st}) : trace :=
+match tr as tr' return (tr' = tr -> trace) with
+| Tnil st => fun h => let: exist tr1 _ := g st (Tnil_fin h) in tr1
+| Tcons st tr' => fun h => Tcons st (@f q tr' (fun st0 h' => g _ (Tcons_fin h h')))
+end eq_refl.
 
 (* Lemma 4.4 *)
 Lemma after_Last: forall p r, after ([|Last p|]) r -> after p r.
-Proof. move => [p hp] [q hq]. simpl. move => h0 tr0 h1. 
+Proof.
+move => [p hp] [q hq]. simpl. move => h0 tr0 h1.
 have: forall st, fin tr0 st -> {tr1: trace | q tr1 /\ hd tr1 = st}.
   move => st0 h2. have h3: singleton (last p) (Tnil st0).
   exists st0. split; last apply bisim_reflexive. exists tr0. split => //. 
@@ -244,13 +234,13 @@ have: forall st, fin tr0 st -> {tr1: trace | q tr1 /\ hd tr1 = st}.
   move: h => [tr1 h0]. exists tr1. foo h0. done.
 move => h2. clear h0 h1. exists (f h2). move: tr0 h2. cofix hcoind.
 move => t0. dependent inversion t0.
-- move => h0. rewrite [f _]trace_destr. simpl. unfold ssr_have.
+- move => h0. rewrite [f _]trace_destr. simpl. 
   destruct (h0 s (fin_nil s)).
   destruct a.
   by destruct x; apply follows_nil.
 - move => h0. rewrite [f _]trace_destr. simpl. apply follows_delay. 
-  apply hcoind. 
-Qed.     
+  apply hcoind.
+Qed.
 
 (* Proposition 4.4: projecting the total-correctness Hoare logic into
    the trace-based Hoare logic. *)
