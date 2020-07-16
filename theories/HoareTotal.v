@@ -161,22 +161,31 @@ Lemma tsemax2_complete_aux: forall (p q : trace -> Prop) tr0 st0 (h:fin tr0 st0)
 forall tr1 tr2, hd tr1 = st0 -> follows q (tr0 +++ tr1) tr2 ->   
 p tr1 -> append p q (cut h tr2). 
 Proof.
-move => p q tr0 st0 h0. dependent induction h0.
-- move => tr0 tr1 h0 h2 h3. rewrite trace_append_nil in h2. simpl.  
-  simpl. exists tr0. split => //.
-- move => tr0 tr1 h1 h2 h3. rewrite trace_append_cons in h2. foo h2. 
-  simpl. have := IHh0 _ _ _ X. apply => //.
+move => p q.
+refine (fix IH tr st h {struct h} := _).
+case: tr st h.
+- depelim h => tr0 tr1 h0 h2 h3.
+  rewrite trace_append_nil in h2. simpl.
+  exists tr0. split => //.
+- depelim h => tr0 tr1 h1 h2 h3.
+  rewrite trace_append_cons in h2. foo h2.
+  simpl. by apply: (IH _ _ _ _ _ _ H2).
 Qed.
 
 Lemma tsemax2_complete_aux2: forall p tr0 st0 (h: fin tr0 st0),
-forall tr1 tr2, follows p (tr0 +++ tr1) tr2 -> 
-hd (cut h tr2) = hd tr1. 
-Proof. move => p tr0 st0 h0. dependent induction  h0. 
-- move => tr0 tr1. rewrite trace_append_nil. simpl. move => h0.
-  have := follows_hd h0. done. 
-- move => tr0 tr1. rewrite trace_append_cons. simpl. move => h1. foo h1 . 
-  have := IHh0  _ _ X. apply. 
-Qed.    
+ forall tr1 tr2, follows p (tr0 +++ tr1) tr2 -> 
+ hd (cut h tr2) = hd tr1.
+Proof.
+move => p.
+refine (fix IH tr st h {struct h} := _).
+case: tr st h.
+- depelim h => tr0 tr1.
+  rewrite trace_append_nil. simpl. move => h0.
+  have := follows_hd h0. done.
+- depelim h => tr0 tr1.
+  rewrite trace_append_cons. simpl. move => h1. foo h1 . 
+  by apply: (IH  _ _ _ _ _ H2).
+Qed.
 
 Lemma tsemax2_complete_aux3: forall u0 w u p st0, 
 u0 ->> u ->
@@ -195,17 +204,17 @@ Lemma after_Append: forall p q r, after (p *** q) r -> after ([|Last p|] *** q) 
 Proof. move => [p hp] [q hq] [r hr]. simpl. move => h0 tr0 [tr1 [h1 h2]]. 
 destruct h1 as [st0 [h1 h3]]. foo h3. foo h2. destruct h1 as [tr1 [h1 h2]].  
 have h3: (p *+* q) (tr1 +++ tr0).
-* exists tr1; split => //. clear h1. move: tr0 tr1 X h2. cofix hcoind. 
+* exists tr1; split => //. clear h1. move: tr0 tr1 H1 h2. cofix hcoind. 
   move => tr0. case. 
   - move => st0 h2 h1. foo h1. rewrite trace_append_nil. apply follows_nil => //.
   - move => st0 tr1 h2 h3. foo h3. rewrite [Tcons st0 tr1 +++ _]trace_destr. 
     simpl. apply follows_delay. have := hcoind _ _ h2 H2. done. 
-have := h0 _ h3 => {h0 h3}. move => [tr2 h0]. clear X h1. 
+have := h0 _ h3 => {h0 h3}. move => [tr2 h0]. clear H1 h1. 
 move h1 : (hd tr0) => st0. rewrite h1 in h2. move: tr1 st0 h2 tr0 h1 tr2 h0.
 induction 1. 
 - move => tr0 h0 tr1 h1. rewrite trace_append_nil in h1. exists tr1. done. 
 - move => tr0 h0 tr1 h1. rewrite trace_append_cons in h1. foo h1. 
-  have := IHh2 _ _ _ X. apply => //. 
+  have := IHh2 _ _ _ H2. apply => //. 
 Qed.           
  
 Program CoFixpoint f (q : trace -> Type) (tr: trace) 
@@ -219,7 +228,7 @@ Obligation 1.
 apply fin_nil. Defined. 
 
 Obligation 2. 
-have := g _ (fin_delay st H). move => [tr  h]. by exists tr. Defined. 
+have := g _ (fin_delay st H). move => [tr  h]. by exists tr. Defined.
 
 (* Lemma 4.4 *)
 Lemma after_Last: forall p r, after ([|Last p|]) r -> after p r.
