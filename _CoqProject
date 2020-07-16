@@ -1,4 +1,4 @@
--R theories CoindSemWhile
+-Q theories CoindSemWhile
 
 -arg -w -arg -local-declaration
 

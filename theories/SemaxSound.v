@@ -1,10 +1,4 @@
-Require Import SsrExport. 
-Require Import Trace.
-Require Import Language. 
-Require Import BigRel.
-Require Import BigFunct.
-Require Import Assert.
-Require Import Semax.
+From CoindSemWhile Require Import SsrExport Trace Language BigRel BigFunct Assert Semax.
  
 Set Implicit Arguments.
 Unset Strict Implicit.

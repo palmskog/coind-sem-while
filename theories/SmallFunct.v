@@ -1,9 +1,4 @@
-Require Import SsrExport.
-Require Import Trace.
-Require Import Language.
-Require Import SmallRel.
-Require Import BigRel.
-Require Import BigFunct.
+From CoindSemWhile Require Import SsrExport Trace Language SmallRel BigRel BigFunct.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

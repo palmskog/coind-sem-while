@@ -1,10 +1,6 @@
-Require Import SsrExport.
-Require Import Trace.
-Require Import Language. 
-Require Import Semax.
-Require Import Assert.
-Require Import AssertClassical.
-Require Import Lia.
+From CoindSemWhile Require Import SsrExport Trace Language Semax.
+From CoindSemWhile Require Import Assert AssertClassical.
+From Coq Require Import Lia.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -44,7 +40,7 @@ induction 1.
 - move => tr0 h0. foo h0. 
   - done. 
   - have := IHred_hd_x _ H5. by apply. 
-Qed. 
+Qed.
 
 Lemma red_hd_x_setoid: forall tr0 tr1, red_hd_x tr0 tr1 ->
 forall tr2, bisim tr0 tr2 -> forall tr3, bisim tr1 tr3 -> red_hd_x tr2 tr3. 

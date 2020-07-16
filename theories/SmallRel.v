@@ -1,8 +1,5 @@
-Require Import SsrExport.
-Require Import Trace.
-Require Import Language. 
-Require Import BigRel. 
-Require Import JMeq.
+From CoindSemWhile Require Import SsrExport Trace Language BigRel.
+From Coq Require Import JMeq.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

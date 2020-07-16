@@ -1,6 +1,4 @@
-Require Import SsrExport.
-Require Import Trace.
-Require Import Language.
+From CoindSemWhile Require Import SsrExport Trace Language.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

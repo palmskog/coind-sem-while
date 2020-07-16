@@ -1,9 +1,5 @@
-Require Import SsrExport.
-Require Import Trace.
-Require Import Language. 
-Require Import Assert. 
-Require Import Semax.
-Require Import Lia.
+From CoindSemWhile Require Import SsrExport Trace Language Assert Semax.
+From Coq Require Import Lia.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

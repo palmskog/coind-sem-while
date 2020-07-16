@@ -1,9 +1,4 @@
-Require Import SsrExport.
-Require Import Setoid. 
-Require Import Trace.
-Require Import Language.
-Require Import Assert.
-Require Import AssertClassical.
+From CoindSemWhile Require Import SsrExport Trace Language Assert AssertClassical.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

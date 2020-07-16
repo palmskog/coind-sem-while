@@ -1,7 +1,4 @@
-Require Import SsrExport.
-Require Import Setoid. 
-Require Import Trace.
-Require Import Language.
+From CoindSemWhile Require Import SsrExport Trace Language.
 
 Add Relation trace bisim 
 reflexivity proved by bisim_reflexive

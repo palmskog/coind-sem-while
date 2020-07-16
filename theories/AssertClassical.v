@@ -1,9 +1,5 @@
-Require Import SsrExport.
-Require Import Setoid. 
-Require Import Trace.
-Require Import Language.
-Require Import Assert.
-Require Import ClassicalEpsilon.
+From CoindSemWhile Require Import SsrExport Trace Language Assert.
+From Coq Require Import ClassicalEpsilon.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

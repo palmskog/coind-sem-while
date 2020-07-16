@@ -1,14 +1,7 @@
-Require Import SsrExport.
-Require Import Trace.
-Require Import Language. 
-Require Import Semax.
-Require Import SemaxSound.
-Require Import Assert.
-Require Import AssertClassical.
-Require Import ClassicalEpsilon.
-Require Import BigFunct.
-Require Import Coq.Program.Equality.
-Require Import Lia.
+From CoindSemWhile Require Import SsrExport Trace Language Semax SemaxSound.
+From CoindSemWhile Require Import Assert AssertClassical BigFunct.
+From Coq Require Import Lia Program.Equality.
+From Coq Require Import ClassicalEpsilon.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

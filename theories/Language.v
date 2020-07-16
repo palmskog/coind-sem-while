@@ -1,5 +1,5 @@
-Require Import Trace.
-Require Export Arith.
+From CoindSemWhile Require Import Trace.
+From Coq Require Export Arith.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
