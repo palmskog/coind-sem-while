@@ -83,7 +83,7 @@ Proof. move => s. induction s.
     apply => //. rewrite /J. move => st [_ h]. done. 
   have := tsemax2_conseq _ _ (tsemax2_while 0 hs). apply => //. move => st0.
   move => [n0 h0]. destruct h0 as [h0 [h1 h2]]. done. 
-Qed.        
+Qed.
 
 Inductive len: nat -> trace -> Prop :=
 | len_stop: forall n st, len n (Tnil st)
@@ -105,10 +105,11 @@ move => n. induction n.
   have := len_S h0. done. 
 move => h. move => n m h0 tr h1. 
 rewrite (_: m = (m - n) + n); last by lia. 
-have := h _ _ _ h1. apply. Qed.         
+have := h _ _ _ h1. apply.
+Qed.
 
-Definition Len (p: assertT) (n: nat) : assertS := fun st =>
-forall tr, (hd tr = st) /\ (satisfy p tr) -> len n tr.
+Definition Len (p: assertT) (n: nat) : assertS :=
+fun st => forall tr, (hd tr = st) /\ (satisfy p tr) -> len n tr.
 
 (* Lemma 4.1: ⌈P⌉n is anti-monotone. *)
 Lemma Len_monotone: forall n p q, q =>> p -> (Len p n) ->> (Len q n).
@@ -140,40 +141,32 @@ Proof. move => [p0 hp0] [p1 hp1] [q hq]. move => h0 h1 tr1 h2.
 have := h0 _ h2. simpl. clear h2. move => h2. have := h1 _ h2.
 done. Qed.
 
-Definition fin_dec (tr0 : trace) (st0 : state) (h: fin tr0 st0) :
- { tr : trace & { st1 : state | tr0 = Tcons st1 tr /\ fin tr st0 } }+{ tr0 = Tnil st0 }.
-destruct tr0.
-- by right; inversion h.
-- left; exists tr0; exists s.
-  by inversion h; subst.
+Definition invert_fin_delay
+ (tr : trace) (st st0 : state) (h : fin (Tcons st tr) st0) : fin tr st0.
+Proof.
+  by dependent destruction h.
 Defined.
 
-Fail Fixpoint cut' (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace) : trace :=
-match fin_dec h with
-| inleft (existT tr' (exist st' (conj Heq Hfin))) =>
+Fixpoint cut (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace) { struct h }: trace :=
+match tr0 as tr0' return (fin tr0' st0 -> trace) with
+| Tnil _ => fun _ => tr1
+| Tcons st tr => fun h' =>
   match tr1 with
-  | Tnil s => Tnil s
-  | Tcons st0 tr2 => cut' Hfin tr2
-  end    
-| inright _ => tr1
-end.
- 
-Fixpoint cut (tr0: trace) (st0: state) (h: fin tr0 st0) (tr1: trace): trace :=
-match h with
-| fin_nil _ => tr1
-| fin_delay _ _ _ h' => 
-  match tr1 with | Tnil _ => tr1 | Tcons st0 tr1' => cut h' tr1' end
-end.
+  | Tnil _ => tr1
+  | Tcons st1 tr1' => cut (invert_fin_delay h') tr1'
+  end
+end h.
 
-Lemma tsemax2_complete_aux: forall p q tr0 st0 (h:fin tr0 st0), 
+Lemma tsemax2_complete_aux: forall (p q : trace -> Prop) tr0 st0 (h:fin tr0 st0), 
 forall tr1 tr2, hd tr1 = st0 -> follows q (tr0 +++ tr1) tr2 ->   
 p tr1 -> append p q (cut h tr2). 
-Proof. move => p q tr0 st0 h0. dependent induction h0. 
+Proof.
+move => p q tr0 st0 h0. dependent induction h0.
 - move => tr0 tr1 h0 h2 h3. rewrite trace_append_nil in h2. simpl.  
   simpl. exists tr0. split => //.
 - move => tr0 tr1 h1 h2 h3. rewrite trace_append_cons in h2. foo h2. 
-  simpl. have := IHh0 _ _ _ X. apply => //. Qed.   
-   
+  simpl. have := IHh0 _ _ _ X. apply => //.
+Qed.
 
 Lemma tsemax2_complete_aux2: forall p tr0 st0 (h: fin tr0 st0),
 forall tr1 tr2, follows p (tr0 +++ tr1) tr2 -> 

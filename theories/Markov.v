@@ -78,7 +78,7 @@ Definition B_holds_for_x : assertS := fun st => B (st x).
 Definition incr_x : expr := fun st => st x + 1.
 
 (*
-x := 0; while cond (x := x + 1)
+x := 0; while !(B x) (x := x + 1)
 *)
 
 Definition s : stmt := x <- (fun _ => 0);; Swhile cond (x <- incr_x).
