@@ -1,7 +1,6 @@
 From CoindSemWhile Require Import SsrExport Trace Language Semax SemaxSound.
 From CoindSemWhile Require Import Assert AssertClassical BigFunct.
 From Coq Require Import Lia Program.Equality.
-From Coq Require Import ClassicalEpsilon.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -205,41 +204,12 @@ induction 1.
   have := IHh2 _ _ _ H2. apply => //. 
 Qed.
 
-Lemma Tnil_fin tr st (h : Tnil st = tr) : fin tr st.
-Proof.
-by rewrite -h; apply fin_nil.
-Defined.
-
-Lemma Tcons_fin tr tr' st st' (h : Tcons st tr' = tr) (h': fin tr' st') : fin tr st'.
-Proof.
-by rewrite -h; apply fin_delay.
-Defined.
- 
-CoFixpoint f (q : trace -> Prop) (tr: trace)
-  (g: forall st, fin tr st -> {tr1: trace | q tr1 /\ hd tr1 = st}) : trace :=
-match tr as tr' return (tr' = tr -> trace) with
-| Tnil st => fun h => let: exist tr1 _ := g st (Tnil_fin h) in tr1
-| Tcons st tr' => fun h => Tcons st (@f q tr' (fun st0 h' => g _ (Tcons_fin h h')))
-end eq_refl.
-
 (* Lemma 4.4 *)
 Lemma after_Last: forall p r, after ([|Last p|]) r -> after p r.
 Proof.
 move => [p hp] [q hq]. simpl. move => h0 tr0 h1.
-have: forall st, fin tr0 st -> {tr1: trace | q tr1 /\ hd tr1 = st}.
-  move => st0 h2. have h3: singleton (last p) (Tnil st0).
-  exists st0. split; last apply bisim_reflexive. exists tr0. split => //. 
-  have := h0 _ h3 => {h0 h3} h.
-  apply constructive_indefinite_description in h.
-  move: h => [tr1 h0]. exists tr1. foo h0. done.
-move => h2. clear h0 h1. exists (f h2). move: tr0 h2. cofix hcoind.
-move => t0. dependent inversion t0.
-- move => h0. rewrite [f _]trace_destr. simpl. 
-  destruct (h0 s (fin_nil s)).
-  destruct a.
-  by destruct x; apply follows_nil.
-- move => h0. rewrite [f _]trace_destr. simpl. apply follows_delay. 
-  apply hcoind.
+apply: fin_hd_follows.
+exact: (singleton_last_fin h0).
 Qed.
 
 (* Proposition 4.4: projecting the total-correctness Hoare logic into

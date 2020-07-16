@@ -60,3 +60,48 @@ Proof.
 move => p1 p2 p3 tr0 h1. destruct p1 as [f1 hf1]. destruct p2 as [f2 hf2]. 
 destruct p3 as [f3 hf3]. simpl. simpl in h1. apply append_assoc_R. by apply h1. 
 Qed.
+
+Lemma Tnil_fin tr st (h : Tnil st = tr) : fin tr st.
+Proof.
+by rewrite -h; apply fin_nil.
+Defined.
+
+Lemma Tcons_fin tr tr' st st' (h : Tcons st tr' = tr) (h': fin tr' st') : fin tr st'.
+Proof.
+by rewrite -h; apply fin_delay.
+Defined.
+ 
+CoFixpoint f (q : trace -> Prop) (tr: trace)
+  (g: forall st, fin tr st -> {tr1: trace | q tr1 /\ hd tr1 = st}) : trace :=
+match tr as tr' return (tr' = tr -> trace) with
+| Tnil st => fun h => let: exist tr1 _ := g st (Tnil_fin h) in tr1
+| Tcons st tr' => fun h => Tcons st (@f q tr' (fun st0 h' => g _ (Tcons_fin h h')))
+end eq_refl.
+
+Lemma singleton_last_fin: forall p q tr0,
+ (forall tr, singleton (last p) tr -> exists tr1, follows q tr tr1) ->
+ p tr0 ->
+ forall st, fin tr0 st -> { tr1 | q tr1 /\ hd tr1 = st}.
+Proof.
+move => p q tr0 h0 h1 st0 h2.
+have h3: singleton (last p) (Tnil st0).
+  by exists st0; split; last apply bisim_reflexive; exists tr0.
+have := h0 _ h3 => {h0 h3} h.
+apply constructive_indefinite_description in h.
+move: h => [tr1 h0]. exists tr1. foo h0. done.
+Qed.
+
+Lemma fin_hd_follows : forall q tr0,
+ (forall st, fin tr0 st -> { tr1 | q tr1 /\ hd tr1 = st }) ->
+ exists tr1, follows q tr0 tr1.
+Proof.
+move => q tr0 h2. exists (f h2).
+move: tr0 h2. cofix hcoind.
+move => t0. dependent inversion t0.
+- move => h0. rewrite [f _]trace_destr. simpl. 
+  destruct (h0 s (fin_nil s)).
+  destruct a.
+  by destruct x; apply follows_nil.
+- move => h0. rewrite [f _]trace_destr. simpl. apply follows_delay. 
+  apply hcoind.
+Qed.
