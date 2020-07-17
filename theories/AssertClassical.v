@@ -8,6 +8,7 @@ Import Prenex Implicits.
 Definition follows_dec : forall p tr0 tr1 (h: follows p tr0 tr1),
  { tr & { st | tr0 = Tnil st /\ hd tr = st /\ p tr } } +
  { tr & { tr' & { st | tr0 = Tcons st tr /\ tr1 = Tcons st tr' /\ follows p tr tr'} } }.
+Proof.
 intros.
 destruct tr0.
 - left; exists tr1; exists s. by inversion h; subst.
@@ -16,7 +17,8 @@ destruct tr0.
   * right; exists tr0; exists tr1; exists s. by inversion h; subst.
 Defined.
 
-CoFixpoint midp_dec (p0 p1: trace -> Prop) (tr0 tr1: trace) (h: follows (append p0 p1) tr0 tr1) : trace.
+CoFixpoint midp_dec (p0 p1: trace -> Prop) tr0 tr1 (h: follows (append p0 p1) tr0 tr1) : trace.
+Proof.
 case (follows_dec h).
 - case => tr; case => st; case => h1; case => h2 h3.
   apply constructive_indefinite_description in h3.
@@ -26,7 +28,7 @@ case (follows_dec h).
   apply (Tcons st (@midp_dec _ _ _ _ h3)).
 Defined.
 
-Lemma midp_midp_dec : forall (p0 p1: trace -> Prop)  (tr0 tr1: trace) (h : follows (append p0 p1) tr0 tr1),
+Lemma midp_midp_dec : forall (p0 p1: trace -> Prop)  tr0 tr1 (h : follows (append p0 p1) tr0 tr1),
  midp h (midp_dec h).
 Proof.
 cofix CIH.
@@ -43,7 +45,7 @@ dependent inversion h.
 Qed.
 
 Lemma append_assoc_R: forall p1 p2 p3,
-forall tr, (append p1 (append p2 p3)) tr -> (append (append p1 p2)  p3) tr.
+ forall tr, (append p1 (append p2 p3)) tr -> (append (append p1 p2)  p3) tr.
 Proof. 
 move => p1 p2 p3 tr0 h1.  move: h1 => [tr1 [h1 h2]].
 exists (midp_dec h2). split. 
@@ -54,28 +56,27 @@ exists (midp_dec h2). split.
 Qed.
 
 (* Lemma 3.4 (4) <= *)
-Lemma Append_assoc_R: forall p1 p2 p3,
-(p1 *** p2 *** p3) =>> (p1 *** p2) *** p3.
+Lemma Append_assoc_R: forall p1 p2 p3, (p1 *** p2 *** p3) =>> (p1 *** p2) *** p3.
 Proof. 
 move => p1 p2 p3 tr0 h1. destruct p1 as [f1 hf1]. destruct p2 as [f2 hf2]. 
 destruct p3 as [f3 hf3]. simpl. simpl in h1. apply append_assoc_R. by apply h1. 
 Qed.
 
-Lemma Tnil_fin tr st (h : Tnil st = tr) : fin tr st.
+Definition Tnil_eq_fin tr st (h : Tnil st = tr) : fin tr st.
 Proof.
 by rewrite -h; apply fin_nil.
 Defined.
 
-Lemma Tcons_fin tr tr' st st' (h : Tcons st tr' = tr) (h': fin tr' st') : fin tr st'.
+Definition Tcons_eq_fin tr tr' st st' (h : Tcons st tr' = tr) (h': fin tr' st') : fin tr st'.
 Proof.
 by rewrite -h; apply fin_delay.
 Defined.
  
-CoFixpoint f (q : trace -> Prop) (tr: trace)
-  (g: forall st, fin tr st -> {tr1: trace | q tr1 /\ hd tr1 = st}) : trace :=
+CoFixpoint f (q : trace -> Prop) tr
+  (g: forall st, fin tr st -> {tr1 : trace | q tr1 /\ hd tr1 = st}) : trace :=
 match tr as tr' return (tr' = tr -> trace) with
-| Tnil st => fun h => let: exist tr1 _ := g st (Tnil_fin h) in tr1
-| Tcons st tr' => fun h => Tcons st (@f q tr' (fun st0 h' => g _ (Tcons_fin h h')))
+| Tnil st => fun h => let: exist tr1 _ := g st (Tnil_eq_fin h) in tr1
+| Tcons st tr' => fun h => Tcons st (@f q tr' (fun st0 h' => g _ (Tcons_eq_fin h h')))
 end eq_refl.
 
 Lemma singleton_last_fin: forall p q tr0,
