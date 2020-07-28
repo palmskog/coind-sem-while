@@ -19,19 +19,6 @@ Definition assertS_and (u1 u2: assertS) := fun st =>  u1 st /\ u2 st.
 
 Infix "andS" := assertS_and (at level 60, right associativity).
 
-Definition assertT_and0 (p1 p2: assertT) :=
-let: exist f0 h0 := p1 in
-let: exist f1 h1 := p2 in
-fun tr => f0 tr /\ f1 tr.
-
-Lemma assertT_and0_setoid: forall p0 p1, setoid (assertT_and0 p0 p1). 
-move => [f0 h0] [f1 h1]. simpl.  
-move => tr0 [h2 h3] tr1 h4. split. 
-* have := h0 _ h2 _ h4; apply. 
-* have := h1 _ h3 _ h4; apply.
-Qed.   
-
-
 Definition assertT_and (p1 p2: assertT): assertT. 
 destruct p1 as [f0 h0]. 
 destruct p2 as [f1 h1]. exists (fun tr => f0 tr /\ f1 tr). 
@@ -91,19 +78,19 @@ simpl in h2. simpl. split.
 apply h0. done. apply h1. done. 
 Qed.
 
-Inductive ttS: state -> Prop := | ttS_intro: forall st, ttS st.
+Definition ttS: assertS := fun st => True.
 Definition ffS: assertS := fun st => False.
 
-Inductive ttt: trace -> Prop := | ttt_intro: forall tr, ttt tr.
+Definition ttt: trace -> Prop := fun tr => True.
 Definition ttT: assertT.
-exists ttt. move => tr0 h0 tr1 h1. apply ttt_intro. 
+exists ttt. by move => tr0 h0 tr1 h1. 
 Defined.
 
 Lemma assertT_imp_refl: forall p, p =>> p. 
 Proof. move => p tr0 h0. done. Qed. 
 
 Lemma satisfy_cont: forall p0 p1, 
-p0 =>> p1 -> forall tr, satisfy p0 tr -> satisfy p1 tr. 
+ p0 =>> p1 -> forall tr, satisfy p0 tr -> satisfy p1 tr.
 Proof. move => [f0 h0] [f1 h1] h2 tr h3. 
 simpl. simpl in h3. have := h2 _ h3. apply. 
 Qed.
@@ -116,9 +103,11 @@ have := satisfy_cont h0 h2. by apply.
 Qed.
 
 Lemma andS_left: forall u1 u2, (u1 andS u2) ->> u1. 
-Proof. move => u1 u2 st h1; by inversion h1. Qed.  
+Proof. move => u1 u2 st h1; by inversion h1. Qed.
+
 Lemma andS_right: forall u1 u2, (u1 andS u2) ->> u2.
-Proof. move => u1 u2 st h1; by inversion h1. Qed.   
+Proof. move => u1 u2 st h1; by inversion h1. Qed.
+
 Lemma andS_cont: forall u1 u1' u2 u2',
 u1 ->> u1' ->
 u2 ->> u2' ->
@@ -630,7 +619,7 @@ move => u tr h0. simpl in h0. simpl.
 move: h0 => [tr1 [h0 h1]]. 
 have h2 := follows_singleton h1 => {h1}.
 have := finite_setoid h0 h2. by apply. 
-Qed.    
+Qed.
 
 CoInductive iter (p: trace -> Prop): trace -> Prop :=
 | iter_stop: forall st, iter p (Tnil st)

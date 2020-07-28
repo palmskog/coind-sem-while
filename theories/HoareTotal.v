@@ -861,7 +861,7 @@ Proof.
 move => s U V htsemax.
 have := (tsemax_correct_semax htsemax ttS) => {htsemax}. move => htsemax. 
 have := semax_conseq _ _  htsemax. apply. 
-- move => st0 hU; split; [auto | apply ttS_intro]. 
+- by move => st0 hU; split; auto.
 - have := (assertT_imp_trans (@Append_assoc_R _ _ _)). apply. 
   apply Append_monotone_L. move => tr [tr1 [h0 h1]]. 
   destruct h0 as [st0 [h0 h2]]. inversion h1; subst; clear h1. 
