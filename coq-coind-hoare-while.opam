@@ -5,7 +5,7 @@ version: "dev"
 homepage: "https://github.com/palmskog/coind-sem-while"
 dev-repo: "git+https://github.com/palmskog/coind-sem-while.git"
 bug-reports: "https://github.com/palmskog/coind-sem-while/issues"
-license: "Unknown"
+license: "MIT"
 
 synopsis: "Hoare logic in Coq for coinductive trace-based operational semantics of While"
 description: """

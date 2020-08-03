@@ -19,6 +19,7 @@ While language, using predicative definitions of relations.
 - Author(s):
   - Keiko Nakata (initial)
   - Tarmo Uustalu (initial)
+- License: [MIT License](LICENSE)
 - Compatible Coq versions: 8.10 or later
 - Additional dependencies: none
 - Coq namespace: `CoindHoareWhile`
