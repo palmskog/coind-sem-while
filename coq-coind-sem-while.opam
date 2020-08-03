@@ -5,7 +5,7 @@ version: "dev"
 homepage: "https://github.com/palmskog/coind-sem-while"
 dev-repo: "git+https://github.com/palmskog/coind-sem-while.git"
 bug-reports: "https://github.com/palmskog/coind-sem-while/issues"
-license: "Unknown"
+license: "MIT"
 
 synopsis: "Big-step, small-step, relational, and functional style operational semantics, as well as Hoare logic, for While in Coq using coinductive traces"
 description: """

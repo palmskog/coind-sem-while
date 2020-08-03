@@ -18,6 +18,7 @@ impredicativity is used to encode induction-recursion.
 - Author(s):
   - Keiko Nakata (initial)
   - Tarmo Uustalu (initial)
+- License: [MIT License](LICENSE)
 - Compatible Coq versions: 8.10 or later
 - Additional dependencies: none
 - Coq namespace: `CoindSemWhile`
