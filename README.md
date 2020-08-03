@@ -19,6 +19,7 @@ for both terminating and non-terminating program runs through coinductive traces
 - Author(s):
   - Keiko Nakata (initial)
   - Tarmo Uustalu (initial)
+- License: [MIT License](LICENSE)
 - Compatible Coq versions: 8.10 or later
 - Additional dependencies: none
 - Coq namespace: `CoindOpSemWhile`
