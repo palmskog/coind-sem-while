@@ -21,7 +21,7 @@ publications:
 - pub_url: https://arxiv.org/abs/1412.6579
   pub_title: A Hoare logic for the coinductive trace-based big-step semantics of While
   pub_doi: 10.2168/LMCS-11(1:1)2015
-- pub_url: http://www.cs.ioc.ee/~tarmo/papers/tphols09.pdf
+- pub_url: http://cs.ioc.ee/~keiko/papers/tphols09.pdf
   pub_title: Trace-Based Coinductive Operational Semantics for While
   pub_doi: 10.1007/978-3-642-03359-9_26
 
