@@ -24,7 +24,7 @@ impredicativity is used to encode induction-recursion.
 - Coq namespace: `CoindSemWhile`
 - Related publication(s):
   - [A Hoare logic for the coinductive trace-based big-step semantics of While](https://arxiv.org/abs/1412.6579) doi:[10.2168/LMCS-11(1:1)2015](https://doi.org/10.2168/LMCS-11(1:1)2015)
-  - [Trace-Based Coinductive Operational Semantics for While](http://www.cs.ioc.ee/~tarmo/papers/tphols09.pdf) doi:[10.1007/978-3-642-03359-9_26](https://doi.org/10.1007/978-3-642-03359-9_26)
+  - [Trace-Based Coinductive Operational Semantics for While](http://cs.ioc.ee/~keiko/papers/tphols09.pdf) doi:[10.1007/978-3-642-03359-9_26](https://doi.org/10.1007/978-3-642-03359-9_26)
 
 ## Building instructions
 
