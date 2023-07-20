@@ -1,10 +1,14 @@
+<!---
+This file was generated from `meta.yml`, please do not edit manually.
+Follow the instructions on https://github.com/coq-community/templates to regenerate.
+--->
 # Trace-Based Coinductive Operational Semantics for While
 
-[![CI][action-shield]][action-link]
+[![Docker CI][docker-action-shield]][docker-action-link]
 [![DOI][doi-shield]][doi-link]
 
-[action-shield]: https://github.com/palmskog/coind-sem-while/workflows/CI/badge.svg?branch=master
-[action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow%3ACI
+[docker-action-shield]: https://github.com/palmskog/coind-sem-while/workflows/Docker%20CI/badge.svg?branch=master
+[docker-action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow:"Docker%20CI"
 
 
 
@@ -24,7 +28,7 @@ for both terminating and non-terminating program runs through coinductive traces
 - Additional dependencies: none
 - Coq namespace: `CoindOpSemWhile`
 - Related publication(s):
-  - [Trace-Based Coinductive Operational Semantics for While](http://www.cs.ioc.ee/~tarmo/papers/tphols09.pdf) doi:[10.1007/978-3-642-03359-9_26](https://doi.org/10.1007/978-3-642-03359-9_26)
+  - [Trace-Based Coinductive Operational Semantics for While](https://cs.ioc.ee/~keiko/papers/tphols09.pdf) doi:[10.1007/978-3-642-03359-9_26](https://doi.org/10.1007/978-3-642-03359-9_26)
 
 ## Building instructions
 
