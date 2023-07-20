@@ -1,10 +1,14 @@
+<!---
+This file was generated from `meta.yml`, please do not edit manually.
+Follow the instructions on https://github.com/coq-community/templates to regenerate.
+--->
 # Hoare Logic for Coinductive Trace-Based Semantics of While
 
-[![CI][action-shield]][action-link]
+[![Docker CI][docker-action-shield]][docker-action-link]
 [![DOI][doi-shield]][doi-link]
 
-[action-shield]: https://github.com/palmskog/coind-sem-while/workflows/CI/badge.svg?branch=master
-[action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow%3ACI
+[docker-action-shield]: https://github.com/palmskog/coind-sem-while/workflows/Docker%20CI/badge.svg?branch=master
+[docker-action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow:"Docker%20CI"
 
 
 
@@ -20,7 +24,7 @@ While language, using predicative definitions of relations.
   - Keiko Nakata (initial)
   - Tarmo Uustalu (initial)
 - License: [MIT License](LICENSE)
-- Compatible Coq versions: 8.10 or later
+- Compatible Coq versions: 8.10 to 8.12
 - Additional dependencies: none
 - Coq namespace: `CoindHoareWhile`
 - Related publication(s):
