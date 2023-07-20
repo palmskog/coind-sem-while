@@ -24,7 +24,7 @@ interactive I/O, based on resumptions and termination-sensitive weak bisimilarit
   - Keiko Nakata (initial)
   - Tarmo Uustalu (initial)
 - License: [MIT License](LICENSE)
-- Compatible Coq versions: 8.10 or later
+- Compatible Coq versions: 8.11 or later
 - Additional dependencies: none
 - Coq namespace: `CoindResumptionsWhile`
 - Related publication(s):
