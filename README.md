@@ -7,7 +7,7 @@ Follow the instructions on https://github.com/coq-community/templates to regener
 [![Docker CI][docker-action-shield]][docker-action-link]
 [![DOI][doi-shield]][doi-link]
 
-[docker-action-shield]: https://github.com/palmskog/coind-sem-while/workflows/Docker%20CI/badge.svg?branch=master
+[docker-action-shield]: https://github.com/palmskog/coind-sem-while/workflows/Docker%20CI/badge.svg?branch=abyss
 [docker-action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow:"Docker%20CI"
 
 
@@ -24,7 +24,7 @@ While language, using predicative definitions of relations.
   - Keiko Nakata (initial)
   - Tarmo Uustalu (initial)
 - License: [MIT License](LICENSE)
-- Compatible Coq versions: 8.10 to 8.12
+- Compatible Coq versions: 8.10 or later
 - Additional dependencies: none
 - Coq namespace: `CoindHoareWhile`
 - Related publication(s):
