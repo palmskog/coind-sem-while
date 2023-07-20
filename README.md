@@ -1,9 +1,13 @@
+<!---
+This file was generated from `meta.yml`, please do not edit manually.
+Follow the instructions on https://github.com/coq-community/templates to regenerate.
+--->
 # Coinductive Trace-Based Semantics for While
 
-[![CI][action-shield]][action-link]
+[![Docker CI][docker-action-shield]][docker-action-link]
 
-[action-shield]: https://github.com/palmskog/coind-sem-while/workflows/CI/badge.svg?branch=master
-[action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow%3ACI
+[docker-action-shield]: https://github.com/palmskog/coind-sem-while/workflows/Docker%20CI/badge.svg?branch=master
+[docker-action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow:"Docker%20CI"
 
 
 
@@ -19,7 +23,7 @@ impredicativity is used to encode induction-recursion.
   - Keiko Nakata (initial)
   - Tarmo Uustalu (initial)
 - License: [MIT License](LICENSE)
-- Compatible Coq versions: 8.10 or later
+- Compatible Coq versions: 8.10 to 8.12
 - Additional dependencies: none
 - Coq namespace: `CoindSemWhile`
 - Related publication(s):
