@@ -7,7 +7,7 @@ Follow the instructions on https://github.com/coq-community/templates to regener
 [![Docker CI][docker-action-shield]][docker-action-link]
 [![DOI][doi-shield]][doi-link]
 
-[docker-action-shield]: https://github.com/palmskog/coind-sem-while/workflows/Docker%20CI/badge.svg?branch=master
+[docker-action-shield]: https://github.com/palmskog/coind-sem-while/workflows/Docker%20CI/badge.svg?branch=majas
 [docker-action-link]: https://github.com/palmskog/coind-sem-while/actions?query=workflow:"Docker%20CI"
 
 
