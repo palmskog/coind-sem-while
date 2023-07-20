@@ -6,6 +6,7 @@ Require Import resumption.
 Require Import BigStep.
 Require Import BigStepNodelay.
 Require Import Coq.Program.Equality. 
+Require Import Lia.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -91,15 +92,15 @@ forall s r2, Execseq s r2 r0 ->
   * (Redn n2 r3 (ret st0)) * (n2 <= n0))%type}}}}.
 * induction 1.
   - move => st0 h0 s0 r0 h1. foo h0. foo h1. exists 0. 
-    exists st. exists (ret st0). exists 0. split; last omega. 
+    exists st. exists (ret st0). exists 0. split; last lia. 
     split; last by apply Redn_ret. by split; [apply Redn_ret | done]. 
   - move => st0 h0 s0 r2 h1. foo h0. foo h1.
     - exists 0. exists st. exists (delay r0). exists (S n). 
-      split; last omega. split; last by have := Redn_delay H; apply. 
+      split; last lia. split; last by have := Redn_delay H; apply. 
       by split; [apply Redn_ret | done]. 
     - have [n0 [st1 [r1 [n1 [h0 h1]]]]] := IHRedn _ (Bism_refl _) _ _ H3 => {IHRedn H3}.
       move: h0 => [[h0 h2] h3]. exists (S n0). exists st1.
-      exists r1. exists n1. split; last omega. split; last done. 
+      exists r1. exists n1. split; last lia. split; last done. 
       split; [have := Redn_delay h0; apply | done ]. 
   - move => st0 h0. foo h0. 
   - move => st0 h0. foo h0.
@@ -216,13 +217,13 @@ sum ({n1: nat & {st0: state & {n2: nat & {r3: res &
   - move => f0 h0. foo h0. 
   - move => f0 h0 s0 r2 h1 h2. foo h0. foo h1.
     - clear IHRedn. left. exists 0. exists st. exists (S n). exists (delay r0).
-      split; last omega. split. split; [apply Redn_ret | done]. 
+      split; last lia. split. split; [apply Redn_ret | done]. 
       have := Redn_Setoid (Redn_delay H) (Bism_refl _) (Bism_input (fun v => H2 v)).
       by apply. 
     - have [h0 | h0] := IHRedn _ (Bism_input (fun v => H2 v)) _ _ H4 h2.
       - move: h0 => [n1 [st0 [n2 [r3 [h0 h1]]]]]. move: h0 => [[h0 h4] h3].
         left. exists (S n1). exists st0. exists n2. exists r3. 
-        split; last omega. split; last done. 
+        split; last lia. split; last done. 
         split; [have := Redn_delay h0; apply | done]. 
       - move: h0 => [n1 [f2 [[h0 h1] h3]]]. right. exists (S n1). 
         exists f2. split; last done. 
@@ -230,7 +231,7 @@ sum ({n1: nat & {st0: state & {n2: nat & {r3: res &
     - move => f0 h0. foo h0. 
     - move => f0 h0 s0 r0 h1 h2. foo h0. foo h1.
       - left. exists 0. exists st. exists 0. exists (input f). 
-        split; last omega. split. split; [apply Redn_ret | done]. 
+        split; last lia. split. split; [apply Redn_ret | done]. 
         apply Redn_input. move => x. have := Bism_trans (b x) (H1 x). by apply. 
       - right. exists 0. exists f1.
         have h0 := (fun v => (Bism_trans (Bism_sym (H1 v)) (Bism_sym (b v)))). 
@@ -268,17 +269,17 @@ sum
   - move => v0 r0 h0. foo h0. 
   - move => v0 r2 h0 s r3 h1 h2. foo h1. 
     - foo h0. clear IHRedn. left. exists 0. exists st. exists (S n). 
-      exists (delay r0). split; last omega. split. split. apply Redn_ret. 
+      exists (delay r0). split; last lia. split. split. apply Redn_ret. 
       done. apply Redn_delay. have := Redn_Setoid H (Bism_refl _) (Bism_output v0 H3).
       by apply. 
     - have [h3 | h3] := IHRedn _ _ h0 _ _ H3 h2.
       - move: h3 => [n1 [st0 [n2 [r4 [h3 h4]]]]]. move: h3 => [[h3 h5] h6]. 
         left.  exists (S n1). exists st0. exists n2. exists r4. 
-        split; last omega. split. split => //. have := Redn_delay h3. apply. done.  
+        split; last lia. split. split => //. have := Redn_delay h3. apply. done.  
       - move: h3 => [n1 [r4 [[h3 h4] h5]]]. right. exists (S n1). exists r4. 
         split => //. split => //. have := Redn_delay h3; apply. 
   - move => v0 r2 h0 s r3 h1 h2. foo h0. foo h1. 
-    - left. exists 0. exists st. exists 0. exists (output v0 r0). split; last omega. 
+    - left. exists 0. exists st. exists 0. exists (output v0 r0). split; last lia. 
       split. split => //.  apply Redn_ret. have := Redn_output _ (Bism_trans b H0).
       by apply.
     - right. exists 0. exists r. split. split. have := Redn_output _ (Bism_refl _). 
@@ -299,7 +300,7 @@ Proof.
 move => e s hs.  
 move => n. induction n.
 - move => m r0 st0 h0 st1 h1 h2. 
-  have h3: m = 0; first omega. rewrite h3 in h0 => {h3}. foo h0. 
+  have h3: m = 0; first lia. rewrite h3 in h0 => {h3}. foo h0. 
   foo h2. foo H2. foo H5.   
 - move => m r0 st0 h0 st1 h1 h2. foo h2.   
   - foo h0. foo H1.  apply ExecX_while_false. done. 
@@ -309,7 +310,7 @@ move => n. induction n.
     have h5 := hs _ _ (Resp_ret h2) H2 => {hs}.
     rewrite [Norm _]resd_destr in h5; simpl in h5.
     have := ExecX_while_ret H1 h5. apply.  
-    have := IHn _ _ _ h4 _ _ h3. apply. omega.
+    have := IHn _ _ _ h4 _ _ h3. apply. lia.
 Qed.
 
 Lemma Exec_ExecX_while_input: forall e s, 
@@ -320,7 +321,7 @@ m <= n -> Exec (Swhile e s) st1 r0 ->
 ExecX X (Swhile e s) st1 (inputd (fun v => Norm (h1 v))). 
 Proof.
 move => e s hs. move => n. induction n. 
-- move => m r0 f0 h0 h1 st0 h2 h3. have h4: m = 0; first omega. clear h2. 
+- move => m r0 f0 h0 h1 st0 h2 h3. have h4: m = 0; first lia. clear h2. 
   rewrite h4 in h0 => {h4}. foo h0. foo h3. foo H3. foo H6. 
 - move => m r0 f0 h0 h1 st0 h2 h3. foo h3. 
   - foo h0. foo H1. 
@@ -330,7 +331,7 @@ move => e s hs. move => n. induction n.
       have := hs _ _ (Resp_ret h3) H2 => {H2 hs}.
       rewrite [Norm _]resd_destr; simpl. move => h7. 
       have := ExecX_while_ret H1 h7 => {H1 h7}. apply. 
-      have := IHn _ _ _ h6 h1 _ _ h5. apply. omega. 
+      have := IHn _ _ _ h6 h1 _ _ h5. apply. lia. 
     - move: h3 => [n1 [f1 [[h3 h4] h5]]]. 
       have := hs _ _ (Resp_input h3 h4) H2 => {hs H2}.
       rewrite [Norm _]resd_destr; simpl. move => h6. 
@@ -347,7 +348,7 @@ m <= n -> Exec (Swhile e s) st1 r0 ->
 ExecX X (Swhile e s) st1 (outputd v0 (Norm h1)). 
 Proof. 
 move => e s hs.  move => n. induction n. 
-- move => m r0 v0 r1 h0 h1 st1 h2 h3. have h4: m = 0; first omega. 
+- move => m r0 v0 r1 h0 h1 st1 h2 h3. have h4: m = 0; first lia. 
   rewrite h4 in h0 => {h4 h2}. foo h0. foo h3. foo H3. foo H6.   
 - move => m r0 v0 r1 h0 h1 st1 h2 h3. foo h3. 
   - foo h0. foo H1.  
@@ -356,7 +357,7 @@ move => e s hs.  move => n. induction n.
     - move: h3 => [n1 [st2 [n2 [r3 [h3 h4]]]]]. move: h3 => [[h3 h5] h6].
       have h7 := hs _ _ (Resp_ret h3) H2. 
       rewrite [Norm _]resd_destr in h7; simpl in h7. 
-      have h8: n2 <= n. omega. 
+      have h8: n2 <= n. lia. 
       have h9 := IHn _ _ _ _ h6 h1 _ h8 h5. 
       rewrite [Norm _]resd_destr in h9; simpl in h9. 
       rewrite [Norm _]resd_destr; simpl. 
@@ -456,13 +457,13 @@ move => s. induction s.
       rewrite [Norm _]resd_destr in h1; simpl in h1.
       have := ExecX_ifthenelse_false _ H4 h1. by apply.      
 - move => st0 r0 h0. dependent inversion h0; subst.
-  - move => h1. have h2: n <= n; first omega. 
+  - move => h1. have h2: n <= n; first lia. 
     rewrite [Norm _]resd_destr; simpl. 
     have :=  Exec_ExecX_while_ret IHs r1 h2 h1.  apply. 
   - move => h1. rewrite [Norm _]resd_destr; simpl.
-    have h2: n <= n; first omega. 
+    have h2: n <= n; first lia. 
     have := Exec_ExecX_while_input  IHs r1 r2 h2 h1. by apply.   
-  - move => h1. have h2: n <= n; first omega.
+  - move => h1. have h2: n <= n; first lia.
     rewrite [Norm _]resd_destr; simpl.  
     have := Exec_ExecX_while_output IHs r r3 h2 h1. by apply. 
 - move => st0 r0 h0 h1. foo h1. dependent inversion h0. 
