@@ -1,0 +1,4 @@
+(coq.theory
+ (name CoindResumptionsWhile)
+ (package coq-coind-resumptions-while)
+ (synopsis "Several big-step semantics for While in Coq with interactive I/O"))

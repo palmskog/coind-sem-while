@@ -1,0 +1,73 @@
+---
+fullname: Resumptions, Weak Bisimilarity and Big-Step Semantics for While with Interactive I/O
+shortname: coind-sem-while
+opam_name: coq-coind-resumptions-while
+organization: palmskog
+community: false
+action: true
+coqdoc: false
+dune: false
+branch: sophie
+doi: 10.4204/EPTCS.32.5
+
+synopsis: >-
+  Several big-step semantics for While in Coq with interactive I/O
+
+description: |-
+  Several big-step operational semantics for the While language in Coq with
+  interactive I/O, based on resumptions and termination-sensitive weak bisimilarity.
+
+publications:
+- pub_url: https://arxiv.org/abs/1008.2112
+  pub_title: 'Resumptions, Weak Bisimilarity and Big-Step Semantics for While with Interactive I/O: An Exercise in Mixed Induction-Coinduction'
+  pub_doi: 10.4204/EPTCS.32.5
+
+authors:
+- name: Keiko Nakata
+  initial: true
+- name: Tarmo Uustalu
+  initial: true
+
+opam-file-maintainer: palmskog@gmail.com
+
+opam-file-version: dev
+
+license:
+  fullname: MIT License
+  identifier: MIT
+
+supported_coq_versions:
+  text: 8.10 or later
+  opam: '{>= "8.10"}'
+
+tested_coq_opam_versions:
+- version: 'dev'
+- version: '8.17'
+- version: '8.16'
+- version: '8.15'
+- version: '8.14'
+- version: '8.13'
+- version: '8.12'
+- version: '8.11'
+- version: '8.10'
+
+namespace: CoindResumptionsWhile
+
+keywords:
+- name: coinduction
+- name: while
+- name: resumptions
+
+categories:
+- name: Computer Science/Semantics and Compilation/Semantics
+
+build: |-
+ ## Building instructions
+
+ ``` shell
+ git clone https://github.com/palmskog/coind-sem-while
+ cd coind-sem-while
+ git checkout sophie
+ make   # or make -j <number-of-cores-on-your-machine>
+ ```
+---

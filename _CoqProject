@@ -1,4 +1,4 @@
--R theories Resumptions
+-R theories CoindResumptionsWhile
 
 theories/SsrExport.v
 theories/BigStepClassical.v
