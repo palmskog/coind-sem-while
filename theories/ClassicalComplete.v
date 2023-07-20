@@ -1,4 +1,4 @@
-Require Import ssreflect. 
+Require Import SsrExport.
 Require Export ZArith.
 Require Export List.
 Require Import Language. 
@@ -180,10 +180,10 @@ rewrite [Norm _]resc_destr; simpl.
   have := Redn_Divr h2 d. by apply. 
 - move => h1. dependent inversion h1; subst. 
   absurd False => //. 
-  have [n1 [r5 [h2 _]]] := Redn_output_Wbism r h0 => {r2 h0}. 
+  have [n1 [r5 [h2 _]]] := Redn_output_Wbism r h0 => {h0}. 
   have [_ h0] := Redn_deterministic r4 h2 (Bism_refl _). foo h0.
   absurd False => //. 
-  have [n1 [r5 [h2 _]]] := Redn_output_Wbism r h0 => {r2 h0}. 
+  have [n1 [r5 [h2 _]]] := Redn_output_Wbism r h0 => {h0}. 
   have [_ h0] := Redn_deterministic r4 h2 (Bism_refl _). foo h0.
   have [n1 [r6 [h2 h3]]] := Redn_output_Wbism r h0 => {r h0}. 
   have [_ h0] := Redn_deterministic r5 h2 (Bism_refl _). foo h0.
@@ -526,7 +526,7 @@ move => s. induction s.
     have h3 := IHs1 _ _ H1 (Redn_Divr h4) (Commit_ret h4).
     clear IHs1 H1. rewrite [Norm _]resc_destr in h3; simpl in h3.
     have := ExecX_seq_ret h3 => {h4 h3}. apply. 
-    have := IHs2 _ _ h5 (Redn_Divr h6) (Commit_ret h6) => {H5 IHs2}.
+    have := IHs2 _ _ h5 (Redn_Divr h6) (Commit_ret h6) => {IHs2}.
     rewrite [Norm _]resc_destr; simpl. clear h1 h2 h0. move => h0.
     have h1 := Exec_ret h5 => {h5}.  
     have := (@X_seq _ _ _ _ _ (Commit_ret (Redn_ret st1)) 
@@ -539,7 +539,7 @@ move => s. induction s.
       clear IHs1 H1. rewrite [Norm _]resc_destr in h3; simpl in h3.
       have := ExecX_seq_ret h3 => {h4 h3}. apply. 
       have := IHs2 _ _ h5 (Redn_Divr h6) (Commit_input h6 c) 
-      => {H5 IHs2}.
+      => {IHs2}.
       rewrite [Norm _]resc_destr; simpl. clear h1 h2 h0. move => h0.
       have h1 := Exec_ret h5 => {h5}.  
       have := (@X_seq _ _ _ _ _ (Commit_ret (Redn_ret st1)) 
@@ -560,7 +560,7 @@ move => s. induction s.
       clear IHs1 H1. rewrite [Norm _]resc_destr in h3; simpl in h3.
       have := ExecX_seq_ret h3 => {h4 h3}. apply. 
       have := IHs2 _ _ h5 (Redn_Divr h6) (Commit_output h6 c) 
-      => {H5 IHs2}.
+      => {IHs2}.
       rewrite [Norm _]resc_destr; simpl. clear h1 h2 h0. move => h0.
       have h1 := Exec_ret h5 => {h5}.  
       have := (@X_seq _ _ _ _ _ (Commit_ret (Redn_ret st1)) 

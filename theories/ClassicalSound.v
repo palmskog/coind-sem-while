@@ -1,4 +1,4 @@
-Require Import ssreflect.  
+Require Import SsrExport.
 Require Export ZArith.
 Require Export List.
 Require Import Language. 
@@ -481,21 +481,21 @@ move => X hsetoid heq s0 st0 r0 hexec. dependent inversion hexec.
 - move => h0. foo h0.
 - move => h0. inversion h0. rewrite /seque. 
   have h1 := f_Execdup hsetoid heq e 
-  (seque_obligation_2 hsetoid heq h0 refl refl refl
+  (seque_obligation_2 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_seq_ret e x))). 
   have := Execdup_seq h1 => {h1}. apply.
   rewrite -{1}[s']H4. apply seq_correct.
   apply f_Wbism. 
 - move => h0. inversion h0. rewrite /seque. 
   have h1 := f_Execdup hsetoid heq e 
-  (seque_obligation_4 hsetoid heq h0 refl refl refl
+  (seque_obligation_4 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_seq_input e x ))). 
   have := Execdup_seq h1 => {h1}. apply.
   rewrite -{1}[s']H4. apply seq_correct.
   apply f_Wbism.
 - move => h0. inversion h0. rewrite /seque. 
   have h1 := f_Execdup hsetoid heq e 
-  (seque_obligation_6 hsetoid heq h0 refl refl refl
+  (seque_obligation_6 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_seq_output e x))). 
   have := Execdup_seq h1 => {h1}. apply.
   rewrite -{1}[s']H4. apply seq_correct.
@@ -521,17 +521,17 @@ move => X hsetoid heq s0 st0 r0 hexec. dependent inversion hexec.
 - move => h0. foo h0.
 - move => h0. inversion h0. rewrite /seque. 
   have h1 := f_Wbism hsetoid heq e 
-  (seque_obligation_2 hsetoid heq h0 refl refl refl
+  (seque_obligation_2 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_seq_ret e x))). apply seq_Wbism.
   apply h1.  
 - move => h0. inversion h0. rewrite /seque. 
   have h1 := f_Wbism hsetoid heq e 
-  (seque_obligation_4 hsetoid heq h0 refl refl refl
+  (seque_obligation_4 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_seq_input e x))). apply seq_Wbism.
   apply h1.
 - move => h0. inversion h0. rewrite /seque. 
   have h1 := f_Wbism hsetoid heq e 
-  (seque_obligation_6 hsetoid heq h0 refl refl refl
+  (seque_obligation_6 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_seq_output e x))). apply seq_Wbism.
   apply h1.    
 - move => h0. foo h0. 
@@ -912,7 +912,7 @@ Execseqdup s0 r2 (loopseq hexecseq hstmt r2).
   - move => h0. inversion h0; subst.           
     rewrite [loop  _ _ _ _]io_destr; simpl. fold loopseq. 
     have h1 := f_Execdup hsetoid heq e1 
-    (loop_obligation_2 hsetoid heq h0 refl refl refl 
+    (loop_obligation_2 h0 eq_refl eq_refl eq_refl 
     (JMeq_refl (ExecX_while_ret e0 e1 e2))).
     have := Execdup_while_loop e0 (Execdup_delay (Execdup_delay (Execdup_ret h1))).
     apply. apply Execdup_delay. apply Execdup_delay. apply hcoind2.
@@ -920,7 +920,7 @@ Execseqdup s0 r2 (loopseq hexecseq hstmt r2).
   - move => h0. inversion h0; subst. 
     rewrite [loop  _ _ _ _]io_destr; simpl. fold loopseq. 
     have h1 := f_Execdup hsetoid heq e1 
-    (loop_obligation_4 hsetoid heq h0 refl refl refl 
+    (loop_obligation_4 h0 eq_refl eq_refl eq_refl 
     (JMeq_refl (ExecX_while_input e0 e1 x))).
     have := Execdup_while_loop e0 (Execdup_delay (Execdup_delay (Execdup_ret h1))).
     apply. apply Execdup_delay. apply Execdup_delay. apply hcoind2.
@@ -928,7 +928,7 @@ Execseqdup s0 r2 (loopseq hexecseq hstmt r2).
   - move => h0. inversion h0; subst. 
     rewrite [loop  _ _ _ _]io_destr; simpl. fold loopseq. 
     have h1 := f_Execdup hsetoid heq e1 
-    (loop_obligation_6 hsetoid heq h0 refl refl refl 
+    (loop_obligation_6 h0 eq_refl eq_refl eq_refl 
     (JMeq_refl (ExecX_while_output e0 e1 x))).
     have := Execdup_while_loop e0 (Execdup_delay (Execdup_delay (Execdup_ret h1))).
     apply. apply Execdup_delay. apply Execdup_delay. apply hcoind2.
@@ -1015,18 +1015,18 @@ dependent induction h0.
   apply Wbismi_ret.  
 - move => h0. rewrite [loop _ _ _ _]io_destr; simpl. fold loopseq.
   inversion h0; subst. 
-  have h1 := IHh0_2 h0_2 (JMeq_refl _)  h0.
+  have h1 := IHh0_2 h0.
   have h2 := f_Wbism hsetoid heq h0_1 
-  (loop_obligation_2 hsetoid heq h0 refl refl refl
+  (loop_obligation_2 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_while_ret e0 h0_1 h0_2))).
   set r0 := f hsetoid heq h0_1
-  (loop_obligation_2 hsetoid heq h0 refl refl refl
+  (loop_obligation_2 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_while_ret e0 h0_1 h0_2))). fold r0 in h2. 
   apply Wbismi_delay_R. apply Wbismi_delay_R.
   rewrite [Emb _]io_destr in h2; simpl in h2. 
   have h5 := Wbism_ret_Red h2. 
   have h3 := loopseq_ret hsetoid heq h0_2
-  (loop_obligation_1 hsetoid heq h0 refl refl refl
+  (loop_obligation_1 h0 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_while_ret e0 h0_1 h0_2))) h5 (Bism_refl _).    
   have := Wbismi_Setoid Xwhile_Setoid _ (Bism_refl _) (Bism_sym h3). apply.
   clear h3.   
@@ -1034,17 +1034,16 @@ dependent induction h0.
   have h2 := Red_Steps h4 => {h4}. 
   have := Wbismi_Steps_append h2. apply. apply Xwhile_Setoid. 
   rewrite [append _ _]io_destr; simpl. apply IHh0_2. 
-  apply JMeq_refl.  
 - move => h1. inversion h1; subst.
   have h2 := heq _ _ _ x _ (Bismc_refl _) _ (Bismc_refl _).
   foo h2.
   rewrite [loop _ _ _ _]io_destr; simpl. fold loopseq.
   have h2 := f_Wbism hsetoid heq h0
-  (loop_obligation_4 hsetoid heq h1 refl refl refl
+  (loop_obligation_4 h1 eq_refl eq_refl eq_refl
    (JMeq_refl (ExecX_while_input e0 h0 x))).        
  apply Wbismi_delay_R. apply Wbismi_delay_R.
  set r0 := f hsetoid heq h0
- (loop_obligation_4 hsetoid heq h1 refl refl refl
+ (loop_obligation_4 h1 eq_refl eq_refl eq_refl
  (JMeq_refl (ExecX_while_input e0 h0 x))). fold r0 in h2.
   rewrite [Emb _]io_destr in h2; simpl in h2. 
  have [f1 [h3 h4]] := Wbism_input_Red h2 => {h2}.
@@ -1053,19 +1052,19 @@ dependent induction h0.
         (Bismc_refl (inputc f0)) (inputc f2) (Bismc_refl (inputc f2))).
  have := Steps_Wbismi_loopseq h5.  apply. 
  apply Xwhile_Setoid. rewrite [loopseq _ _ _]io_destr; simpl. 
-  dependent destruction hexecseq. 
- rewrite [Emb _]io_destr; simpl. apply Wbismi_input. 
+  dependent destruction hexecseq.
+  rewrite -x [Emb _]io_destr; simpl. apply Wbismi_input.
   move => v. have := Xwhile_intro (h4 v) (Bism_refl _) (Bism_refl _).
   apply.
 - move => h1. inversion h1; subst. 
   have h2 := heq _ _ _ x _ (Bismc_refl _) _ (Bismc_refl _). foo h2. 
   rewrite [loop _ _ _ _]io_destr; simpl. fold loopseq.
   have h2 := f_Wbism hsetoid heq h0
-  (loop_obligation_6 hsetoid heq h1 refl refl refl
+  (loop_obligation_6 h1 eq_refl eq_refl eq_refl
    (JMeq_refl (ExecX_while_output e0 h0 x))).        
   apply Wbismi_delay_R. apply Wbismi_delay_R.
   set r0 := f hsetoid heq h0
-  (loop_obligation_6 hsetoid heq h1 refl refl refl
+  (loop_obligation_6 h1 eq_refl eq_refl eq_refl
   (JMeq_refl (ExecX_while_output e0 h0 x))). fold r0 in h2.
   rewrite [Emb _]io_destr in h2. simpl in h2.  
   have [r2 [h3 h4]] := Wbism_output_Red h2 => {h2}.
@@ -1075,12 +1074,13 @@ dependent induction h0.
   have := Steps_Wbismi_loopseq h5.  apply.
   apply Xwhile_Setoid.  
   rewrite [loopseq _ _ _]io_destr; simpl. 
-  dependent destruction hexecseq. rewrite [Emb _]io_destr. simpl. 
+  dependent destruction hexecseq.
+  rewrite -x [Emb _]io_destr. simpl. 
   apply Wbismi_output. 
   have := Xwhile_intro h4 (Bism_refl _) (Bism_refl _). apply.
 - move => h1. foo h1. 
 - move => h1. foo h1. 
-Qed.  
+Qed.
 
 Lemma loopseq_Red_ret: forall r0 st0,
 Red r0 (ret st0)  ->
@@ -1454,9 +1454,9 @@ move => s. induction s.
     - move => h0 h1. inversion h0; subst.
       rewrite [cond _ _ _ _ _ _ ]io_destr; simpl. 
       have [[h2 h3] h4] := hf0 X hsetoid heq s1 st0 r0 e1
-      (cond_obligation_1 hsetoid heq h0 refl refl refl
+      (cond_obligation_1 h0 eq_refl eq_refl eq_refl
         (JMeq_refl (ExecX_ifthenelse_true s2 e0 e1))) 
-      (cond_obligation_1 hsetoid heq h1 refl refl refl
+      (cond_obligation_1 h1 eq_refl eq_refl eq_refl
         (JMeq_refl (ExecX_ifthenelse_true s2 e0 e1))).
       split; [split |  idtac].
       * have := Execdup_ifthenelse_true _ e0. apply.
@@ -1467,9 +1467,9 @@ move => s. induction s.
     - move => h0 h1. inversion h0; subst.
       rewrite [cond _ _ _ _ _ _ ]io_destr; simpl. 
       have [[h2 h3] h4] := hf1 X hsetoid heq s2 st0 r0 e1
-      (cond_obligation_2 hsetoid heq h0 refl refl refl
+      (cond_obligation_2 h0 eq_refl eq_refl eq_refl
         (JMeq_refl (ExecX_ifthenelse_false s1 e0 e1))) 
-      (cond_obligation_2 hsetoid heq h1 refl refl refl
+      (cond_obligation_2 h1 eq_refl eq_refl eq_refl
         (JMeq_refl (ExecX_ifthenelse_false s1 e0 e1))).
       split; [split |  idtac].
       * have := Execdup_ifthenelse_false _ e0. apply.
@@ -1526,10 +1526,11 @@ move => s. induction s.
   * rewrite -hstmt0. apply loop_correct. apply f_Execdup.  
      apply f_Wbism. apply hinf. 
   * apply Wbismc_Wbism.  
-    have := Wbismc_intro (@Xwhile_Setoid e s f) 
-    (@Xwhile_Wbismc e s f f_irr f_Wbism).  apply.  
-    have := (@loop_Wbismi e s f). apply. apply f_irr. 
-    apply f_Wbism. apply Bism_delay.
+    have := Wbismc_intro (@Xwhile_Setoid e s f).
+    apply.
+    apply (@Xwhile_Wbismc e s f) => //.
+    have := (@loop_Wbismi e s f). apply => //.
+    apply Bism_delay.
   * apply loop_irr. apply f_irr. 
   * move => X hsetoid himp st0 hexec. 
      have := Execinf_Execdup_while f_Execdup f_Wbism 
