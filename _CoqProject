@@ -1,0 +1,11 @@
+-R theories Resumptions
+
+theories/BigStepClassical.v
+theories/BigStepNodelay.v
+theories/BigStep.v
+theories/ClassicalComplete.v
+theories/ClassicalSound.v
+theories/Language.v
+theories/NodelayComplete.v
+theories/NodelaySound.v
+theories/resumption.v
